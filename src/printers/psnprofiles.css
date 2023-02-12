@@ -176,8 +176,8 @@ html {
   box-sizing: inherit;
 }
 body {
-  font-size: 1.4rem;
-  line-height: 1.6rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
   color: #646464;
   background: #292b2d !important;
   -webkit-text-size-adjust: none;
@@ -296,14 +296,14 @@ td.left {
 
 a.title,
 span.title {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   line-height: 1.9rem;
   font-weight: 400;
 }
 
 a.small-title,
 span.small-title {
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   line-height: 1.7rem;
   font-weight: 400;
 }
@@ -423,7 +423,7 @@ html[xmlns] .cf {
   z-index: 11;
   width: 100%;
   top: 0;
-  #box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
 }
 .container-shadow {
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
@@ -835,7 +835,7 @@ div.title-bar .badge.premium {
 div.title-bar .badge.premium img {
   width: 8px;
   height: 12px;
-  background-image: url("premium.png");
+  background-image: url("/lib/img/icons/premium.png");
   -webkit-transition: width 0.1s ease-in-out;
   -o-transition: width 0.1s ease-in-out;
   -moz-transition: width 0.1s ease-in-out;
@@ -853,7 +853,7 @@ div.title-bar .badge.hidden-trophies {
 div.title-bar .badge.hidden-trophies img {
   width: 10px;
   height: 12px;
-  background-image: url("hidden-trophies.png");
+  background-image: url("/lib/img/icons/hidden-trophies.png");
   -webkit-transition: width 0.1s ease-in-out;
   -o-transition: width 0.1s ease-in-out;
   -moz-transition: width 0.1s ease-in-out;
@@ -1093,7 +1093,7 @@ span.hidden-info {
 span.hidden-info img {
   width: 16px;
   height: 16px;
-  background-image: url("info.png");
+  background-image: url("/lib/img/icons/info.png");
   vertical-align: -4px;
 }
 
@@ -1759,8 +1759,8 @@ div.fancy-loader.dark {
 }
 
 .banner-overlay .guide-info h3 {
-  font-size: 3.5rem;
-  line-height: 5.5rem;
+  font-size: 2rem;
+  line-height: 3rem;
   font-weight: 300;
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
 }
@@ -1771,7 +1771,7 @@ div.fancy-loader.dark {
 }
 
 .banner-overlay .guide-info .title-author {
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 400;
   text-align: center;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
@@ -2148,7 +2148,7 @@ a .typo-top {
 }
 
 ul.trophy_count .level {
-  background-image: url("profile-bar-level.png?1");
+  background-image: url("/lib/img/icons/profile-bar-level.png?1");
   margin-right: 0;
   text-align: right;
   height: 20px;
@@ -2465,7 +2465,7 @@ ul.trophy_count .level {
 */
 
 .icon-sprite {
-  background-image: url("icon-sprite.png?7");
+  background-image: url("/lib/img/icons/icon-sprite.png?7");
   background-repeat: no-repeat;
   background-size: 100px 500px;
 }
@@ -2907,7 +2907,7 @@ picture.series > img {
   width: 20px;
   height: 20px;
   background-size: 20px 20px;
-  background-image: url("dlc-plus.png");
+  background-image: url("/lib/img/icons/dlc-plus.png");
   position: absolute;
   left: -9px;
   top: -32px;
@@ -2923,7 +2923,7 @@ picture.series > img {
   width: 18px;
   height: 18px;
   background-size: 18px 18px;
-  background-image: url("ps-plus.png");
+  background-image: url("/lib/img/icons/ps-plus.png");
   position: absolute;
   right: -7px;
   bottom: -5px;
@@ -3121,7 +3121,7 @@ tr:hover td .tr-toggle-hide {
 }
 
 .level-sprite {
-  background-image: url(level-sprite.png?1);
+  background-image: url(/lib/img/icons/level-sprite.png?1);
   background-repeat: no-repeat;
   background-size: 36px 360px;
   width: 36px;
@@ -3267,7 +3267,7 @@ tr:hover td .tr-toggle-hide {
 }
 
 .round-flags {
-  background-image: url("round-flags/sprite.png?2");
+  background-image: url("/lib/img/icons/round-flags/sprite.png?2");
   background-size: 32px 2240px;
   border-radius: 50%;
   box-shadow: 0 0 1px 0px rgba(0, 0, 0, 0.4);
@@ -3796,9 +3796,9 @@ ul.recent-trophies li:last-child .icon {
 
 .small_info,
 .small-info {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: 1rem;
-  color: #666666;
+  color: #0a0a0a;
 }
 
 .small-info.dark {
@@ -3880,7 +3880,7 @@ ul.recent-trophies li:last-child .icon {
 .trophy-count.platinum {
   padding-right: 31px;
   margin-right: 5px;
-  background: url(platinum-icon.png) no-repeat;
+  background: url(/lib/img/icons/platinum-icon.png) no-repeat;
   background-position: right center;
 }
 
@@ -4254,7 +4254,7 @@ tr.me td {
   font-size: 11px;
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 10;
-  background-image: url("glyphs.png?2");
+  background-image: url("/lib/img/icons/glyphs.png?2");
   background-repeat: no-repeat;
   padding-left: 28px;
   float: right;
@@ -4323,7 +4323,7 @@ tr.me td {
   font-weight: bold;
   padding: 0 10px 0 28px;
   font-size: 1.1rem;
-  background-image: url("glyphs.png?2");
+  background-image: url("/lib/img/icons/glyphs.png?2");
   background-repeat: no-repeat;
   outline: none;
   font-family: "DP", Arial, Verdana, sans-serif;
@@ -5230,7 +5230,7 @@ label {
 }
 
 .sessions-discord-block {
-  background-image: url("discord-white.png");
+  background-image: url("/lib/img/icons/discord-white.png");
   background-repeat: no-repeat;
   background-size: 40px 45px;
   background-color: #7289da;
@@ -5489,7 +5489,7 @@ a.stream-watch {
   display: block;
   width: 24px;
   height: 22px;
-  background: url("rating-stars.png") 0 0px;
+  background: url("/lib/img/icons/rating-stars.png") 0 0px;
 }
 /*
 .rating-inline {
@@ -5520,7 +5520,7 @@ a.stream-watch {
   height: 22px;
   width: 120px;
   margin: 0 auto 0 auto;
-  background: url("rating-stars-inline.png") right;
+  background: url("/lib/img/icons/rating-stars-inline.png") right;
   display: inline-block;
 }
 
@@ -5541,8 +5541,8 @@ a.stream-watch {
 }
 
 .guide {
-  font-size: 1.6rem;
-  line-height: 2.4rem;
+  font-size: 1rem;
+  line-height: 2rem;
   text-align: justify;
   color: #333;
   padding: 10px;
@@ -5551,7 +5551,7 @@ a.stream-watch {
 .guide h1 {
   margin-bottom: 5px !important;
   border-bottom: 1px solid #ddd;
-  font-size: 22px;
+  font-size: 1.5rem;
   font-weight: 400;
   color: #555;
   font-family: DP, Arial, Verdana, sans-serif;
@@ -5805,8 +5805,6 @@ ul.roadmap-trophies {
 .roadmap-trophies img {
   margin-top: 0 !important;
   margin-right: 5px;
-  width: 34px;
-  height: 34px;
 }
 
 .roadmap-trophies {
@@ -5820,7 +5818,6 @@ ul.roadmap-trophies {
   background: rgba(0, 0, 0, 0.02);
   padding: 6px;
   box-shadow: 0 0 0 1px #d3d3d3 inset;
-  overflow: hidden;
   margin-bottom: 10px;
 }
 .roadmap-trophies .trophy.earned {
@@ -5893,7 +5890,12 @@ ul.roadmap-trophies {
 }
 
 .guide img {
-  max-width: 100%;
+  height: auto;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-height: 32px !important;
+  max-width: 32px !important;
+
 }
 
 .guide img.cover {
@@ -6248,7 +6250,7 @@ sup {
 .tableofcontents li span.handle {
   height: 25px;
   width: 20px;
-  background: url("drag-handle.png") no-repeat center;
+  background: url("/lib/img/icons/drag-handle.png") no-repeat center;
   display: inline-block;
   cursor: n-resize;
   margin: -5px -5px -5px -25px;
@@ -6466,7 +6468,7 @@ label .tag {
 #trophy-cabinet .handle {
   height: 56px;
   width: 30px;
-  background: url("drag-handle.png") no-repeat center;
+  background: url("/lib/img/icons/drag-handle.png") no-repeat center;
   cursor: n-resize;
 }
 
@@ -7309,7 +7311,7 @@ ul.pagination li.button a {
     width: 20px;
     height: 20px;
     background-size: 20px 20px;
-    background-image: url("dlc-plus@2x.png");
+    background-image: url("/lib/img/icons/dlc-plus@2x.png");
     position: absolute;
     left: -10px;
     top: -10px;
@@ -7681,7 +7683,7 @@ td.xs-show {
 /* Fix blurry @2x stuff */
 @media (-webkit-max-device-pixel-ratio: 1) {
   .trophy-count ul .level {
-    background-image: url("level-star.png");
+    background-image: url("/lib/img/icons/level-star.png");
     background-repeat: no-repeat;
     background-size: 24px 23px;
     background-position: 0 0;
@@ -7840,7 +7842,7 @@ td.xs-show {
   margin-right: 0;
 }
 .fr-view img.fr-dii {
-  display: inline-block;
+  display: none;
   float: none;
   /*vertical-align: bottom;
   margin-left: 5px;
@@ -8039,7 +8041,7 @@ img.fr-view.fr-bordered {
   /* --cmpBgColor: #fff;
     --cmpTextColor: #000;
     --cmpPurposesColor: #333; */
-  --cmpLogo: url("logo-round-160px.png");
+  --cmpLogo: url("/lib/img/icons/logo-round-160px.png");
 }
 
 #cmpbox.cmpfullscreen {

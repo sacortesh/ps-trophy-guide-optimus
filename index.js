@@ -3,35 +3,44 @@ const scraperGame = require("./src/scrapers/psn-profiles-game");
 
 const assemblerGuide = require("./src/asemblers/psn-profiles-assembler");
 
-const printer = require("./src/printers/printer")
-
+const printer = require("./src/printers/printer");
 
 async function main(url) {
   // Scrape the guide information
   try {
-    const guide = await scraperGuide.scrapeGuide(url);
+
+    const parts = url.split(/#/);
+    const cleanedUrl = parts[0];
+
+
+    const guide = await scraperGuide.scrapeGuide(cleanedUrl);
     const trophyData = await scraperGame.scrapeTrophies(guide.gameUrl);
 
-  console.log("Found the following base trophies. Count " + trophyData.base.length);
-  trophyData.dlcs.forEach(dlc => {
-    console.log("Found the following dlc trophies for DLC " + dlc.name + ". Count" + dlc.length);
+    console.log(
+      "Found the following base trophies. Count " + trophyData.base.length
+    );
+    trophyData.dlcs.forEach((dlc) => {
+      console.log(
+        "Found the following dlc trophies for DLC " +
+          dlc.name +
+          ". Count" +
+          dlc.length
+      );
+    });
 
-  });
+    const updatedGuide = await assemblerGuide.assembleGuide(
+      guide.htmlContent,
+      trophyData
+    );
 
+    console.log("guide:" + updatedGuide);
 
-  const updatedGuide = await assemblerGuide.assembleGuide(guide.htmlContent, trophyData);
+    const result = await printer.printAsPdf(updatedGuide.htmlContent, cleanedUrl);
 
-  console.log('guide:' + updatedGuide);
-
-  const result = await printer.printAsPdf(updatedGuide.htmlContent);
-
-  console.log("Operation finished! File saved in " + result.path);
-
-
+    console.log("Operation finished! File saved in " + result.path);
   } catch (err) {
     console.error("Operation failed!", err);
   }
-
 }
 
 const url = process.argv[2];
