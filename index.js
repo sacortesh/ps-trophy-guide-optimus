@@ -21,6 +21,8 @@ async function main(url) {
 
   const updatedGuide = await assemblerGuide.assembleGuide(guide.htmlContent, trophyData);
 
+  console.log('guide:' + updatedGuide);
+
   const result = await printer.printAsPdf(updatedGuide.htmlContent);
 
   console.log("Operation finished! File saved in " + result.path);
