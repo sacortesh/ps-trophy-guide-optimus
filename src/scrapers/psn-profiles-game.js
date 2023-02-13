@@ -106,10 +106,16 @@ async function scrapeTrophies(gameUrl) {
             dlcTableFirstSelector = "#content > div.row > div.col-xs > div:nth-child(" + i + ")";
         }
 
+        let gameTitleSelector = '#content > div.row > div.col-xs > div.title.flex.v-align.center > div > h3';
+        let title = $(gameTitleSelector).text().trim();
+        title = title.replace('Trophies', '').trim();
+        console.log('Detected game: ' + title);
+
 
         return {
             base,
-            dlcs
+            dlcs,
+            title
         };
     } catch (err) {
         throw new Error("Game scrape failed: " + err.message);

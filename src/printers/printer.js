@@ -147,7 +147,7 @@ async function completeBookmarkedUrl(htmlContent, url) {
   while ((result = urlRegex.exec(htmlContent)) !== null) {
     // Push the matched resource to the resources array
     if (result[1].indexOf("#") >= 0) {
-        bookmarks.push(result[1]);
+      bookmarks.push(result[1]);
     }
   }
 
@@ -158,9 +158,9 @@ async function completeBookmarkedUrl(htmlContent, url) {
     let resource = bookmarks[i];
 
     htmlContent = htmlContent.replace(
-        `href="${resource}"`,
-        `href="${url}${resource}"`
-      );
+      `href="${resource}"`,
+      `href="${url}${resource}"`
+    );
   }
 
   return htmlContent;

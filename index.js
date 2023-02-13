@@ -1,17 +1,15 @@
 const scraperGuide = require("./src/scrapers/psn-profiles-guide");
 const scraperGame = require("./src/scrapers/psn-profiles-game");
 
-const assemblerGuide = require("./src/asemblers/psn-profiles-assembler");
+const assemblerGuide = require("./src/assemblers/psn-profiles-assembler");
 
 const printer = require("./src/printers/printer");
 
 async function main(url) {
   // Scrape the guide information
   try {
-
     const parts = url.split(/#/);
     const cleanedUrl = parts[0];
-
 
     const guide = await scraperGuide.scrapeGuide(cleanedUrl);
     const trophyData = await scraperGame.scrapeTrophies(guide.gameUrl);
@@ -30,12 +28,14 @@ async function main(url) {
 
     const updatedGuide = await assemblerGuide.assembleGuide(
       guide.htmlContent,
-      trophyData
+      trophyData.base,
+      trophyData.title
     );
 
-    console.log("guide:" + updatedGuide);
-
-    const result = await printer.printAsPdf(updatedGuide.htmlContent, cleanedUrl);
+    const result = await printer.printAsPdf(
+      updatedGuide.htmlContent,
+      cleanedUrl
+    );
 
     console.log("Operation finished! File saved in " + result.path);
   } catch (err) {
