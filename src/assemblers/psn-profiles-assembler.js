@@ -58,9 +58,9 @@ function injectThrophyRarity(htmlContent, trophyData, title) {
 
         let tagsF =
           tropData.tags.length > 0
-            ? '<span class="tag">' +
-              tropData.tags.map((tag) => `${tag}`).join(", ") +
-              "</span>"
+            ? tropData.tags
+                .map((tag) => `<span class="tag">${tag}</span>`)
+                .join("\n")
             : "";
 
         let youtubeQuery =
@@ -72,14 +72,13 @@ function injectThrophyRarity(htmlContent, trophyData, title) {
         youtubeQuery = youtubeQuery.replace(/\s/g, "+");
 
         let youtube =
-          '<span class="tag Type" style="width:10%"> ' +
+          '<span class="tag Type"' +
           '<a href="' +
           youtubeQuery +
-          '" >YT</a>' +
+          '" ><strong>Search on YouTube</strong></a>' +
           "</span>";
 
-        let htmlTags =
-          "<br>" + '<div class="ellipsis">' + youtube + tagsF + "</div>";
+        let htmlTags = '<div class="ellipsis">' + youtube + tagsF + "</div>";
 
         $(div).append(htmlTags);
 

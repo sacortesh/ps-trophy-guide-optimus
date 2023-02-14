@@ -356,7 +356,7 @@ html[xmlns] .cf {
   white-space: nowrap;
 }
 .ellipsis > * {
-  display: table-cell;
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
@@ -3797,8 +3797,9 @@ ul.recent-trophies li:last-child .icon {
 .small_info,
 .small-info {
   font-size: 1.1rem;
-  line-height: 1rem;
+  line-height: 1.5rem;
   color: #0a0a0a;
+  white-space: normal;
 }
 
 .small-info.dark {
