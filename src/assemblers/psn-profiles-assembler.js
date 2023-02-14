@@ -33,8 +33,17 @@ function injectThrophyRarity(htmlContent, trophyData, title) {
       // found stages
       let containers = $(stage).find(".col-xs-6");
       $(containers).each((index, element) => {
+        // div.col-xs-6:nth-child(11) > div:nth-child(1) trophy flex v-align
+        // if earned add class earned
+
         let trop = $(element).find("a").text().trim();
         let tropData = getTrophyData(trophyData, trop);
+
+        if (tropData.earned) {
+          let elem = $(element).find(".trophy.flex.v-align");
+          elem.addClass("earned");
+        }
+
         let div = $(element).find("div:nth-child(1) > div:nth-child(2)");
 
         let score = tags.getTagsPriority(tropData.tags);

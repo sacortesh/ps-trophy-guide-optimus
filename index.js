@@ -34,7 +34,8 @@ async function main(url) {
 
     const result = await printer.printAsPdf(
       updatedGuide.htmlContent,
-      cleanedUrl
+      cleanedUrl,
+      trophyData.title
     );
 
     console.log("Operation finished! File saved in " + result.path);

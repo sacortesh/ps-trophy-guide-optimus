@@ -166,7 +166,7 @@ async function completeBookmarkedUrl(htmlContent, url) {
   return htmlContent;
 }
 
-async function printAsPdf(htmlContent, url) {
+async function printAsPdf(htmlContent, url, title = "game") {
   let styles = await downloadStyles(htmlContent);
 
   let styleElements = "";
@@ -206,8 +206,13 @@ async function printAsPdf(htmlContent, url) {
     console.log("HTML file created successfully.");
   });
 
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+
   return new Promise((resolve, reject) => {
-    const path = "./guide.pdf";
+    const path = `./${year}-${month}-${day}-${title}-guide.pdf`;
     pdf
       .create(cleanHtml, {
         format: "A4",
