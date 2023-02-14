@@ -72,10 +72,10 @@ function injectThrophyRarity(htmlContent, trophyData, title) {
         youtubeQuery = youtubeQuery.replace(/\s/g, "+");
 
         let youtube =
-          '<span class="tag Type"' +
+          '<span class="tag Type">' +
           '<a href="' +
           youtubeQuery +
-          '" ><strong>Search on YouTube</strong></a>' +
+          '" >Search on YouTube</a>' +
           "</span>";
 
         let htmlTags = '<div class="ellipsis">' + youtube + tagsF + "</div>";

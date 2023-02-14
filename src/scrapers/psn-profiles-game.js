@@ -95,18 +95,22 @@ async function scrapeTrophies(gameUrl, usr = "skraheux") {
 
     let baseTableIndex = 4;
     if (userFound) {
-        console.log('User progress detected.')
-        baseTableIndex = 5;
+      console.log("User progress detected.");
+      baseTableIndex = 5;
     }
 
-    baseTable =
-      "#content > div.row > div.col-xs > div:nth-child(" +
-      baseTableIndex +
-      ") > table:nth-child(3)";
+    let baseTableContainer =
+      "#content > div.row > div.col-xs > div:nth-child(" + baseTableIndex + ")";
 
-    //div.box:nth-child(5) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1)
+    let hasDLC = false;
 
-    let rows = $(baseTable).find("tr");
+    if ($(baseTableContainer).find("table").length > 1) {
+      hasDLC = true;
+    }
+
+    let baseTableId = "table:nth-child(" + (hasDLC ? "3" : "1") + ")";
+
+    let rows = $(baseTableId).find("tr");
 
     $(rows).each((index, element) => {
       let trophy = extractTrophyData(element, $);
@@ -115,27 +119,27 @@ async function scrapeTrophies(gameUrl, usr = "skraheux") {
       base.push(trophy);
     });
 
-    // extract DLCs
-    let i = 6;
-    let dlcCounter = 0;
-    let dlcTableFirstSelector =
-      "#content > div.row > div.col-xs > div:nth-child(6)";
-    let header = "table:nth-child(1)";
-    let content = "table:nth-child(2)";
+    if (hasDLC) {
+      // extract DLCs
+      let i = 6;
+      let dlcCounter = 0;
+      let dlcTableFirstSelector =
+        "#content > div.row > div.col-xs > div:nth-child(6)";
 
-    while (true) {
-      let table = $(dlcTableFirstSelector);
-      if (table.length === 0) {
-        console.log("No more DLC found");
-        break;
+      while (true) {
+        let table = $(dlcTableFirstSelector);
+        if (table.length === 0) {
+          console.log("No more DLC found");
+          break;
+        }
+
+        dlcCounter++;
+        console.log("Found DLC " + dlcCounter);
+
+        i += 2;
+        dlcTableFirstSelector =
+          "#content > div.row > div.col-xs > div:nth-child(" + i + ")";
       }
-
-      dlcCounter++;
-      console.log("Found DLC " + dlcCounter);
-
-      i += 2;
-      dlcTableFirstSelector =
-        "#content > div.row > div.col-xs > div:nth-child(" + i + ")";
     }
 
     let gameTitleSelector =

@@ -6331,10 +6331,15 @@ sup {
   font-family: "DP", Arial, Verdana, sans-serif;
   color: #fff;
   line-height: 14px;
-  width: fit-content;
+  width: auto !important;
 }
 label .tag {
   cursor: pointer;
+}
+
+.tag a {
+  color: #fff;
+  font-weight: bold;
 }
 
 .tag.Connectivity {
