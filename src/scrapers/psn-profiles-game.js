@@ -14,6 +14,12 @@ function prettyLogTrophy(trophyData = {}) {
 `);
 }
 
+function replaceDomain(url){
+  let result = 'https://webcache.googleusercontent.com/search?q=cache:';
+  let urlUpd = result + url;
+  return urlUpd;
+}
+
 function extractTrophyData(elem, $) {
   let $row = $(elem);
   let trophy = {
@@ -26,6 +32,10 @@ function extractTrophyData(elem, $) {
     type: "",
     tags: [],
     earned: false,
+    suggestedStage: 10,
+    trophyScore: 0,
+    guideUrl: '',
+    youtubeQuery: ''
   };
 
   if ($row.hasClass("completed")) {
@@ -66,21 +76,20 @@ function extractTrophyData(elem, $) {
   return trophy;
 }
 
-async function scrapeTrophies(gameUrl, usr = "skraheux") {
+async function scrapeTrophies(gameUrl, usr = "") {
   try {
     let formatUsr = "";
     if (usr) {
       formatUsr = "/" + usr;
     }
 
-    let secretModQury = "?secret=show";
+    let secretModQury = "";//"?secret=show";
     let url = gameUrl + formatUsr + secretModQury;
-    console.log("Querying: " + url);
-    const response = await axios.get(url);
+    console.log("Querying: " + replaceDomain(url));
+    const response = await axios.get(replaceDomain(url));
     const htmlContent = response.data;
     const $ = cheerio.load(htmlContent);
 
-    // am i
     let userFoundSelector = "#content > div.row > div.col-xs > table";
 
     let userFound = $(userFoundSelector).length;
@@ -88,10 +97,6 @@ async function scrapeTrophies(gameUrl, usr = "skraheux") {
     // Extract the base game and DLC trophy information
     const base = [];
     const dlcs = [];
-
-    let baseTableAnchor = "div.box:nth-child(5)";
-    let baseTitle =
-      "div.box:nth-child(5) > table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2) > span:nth-child(1)";
 
     let baseTableIndex = 4;
     if (userFound) {

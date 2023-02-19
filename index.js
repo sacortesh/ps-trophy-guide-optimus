@@ -4,6 +4,7 @@ const scraperGame = require("./src/scrapers/psn-profiles-game");
 const assemblerGuide = require("./src/assemblers/psn-profiles-assembler");
 
 const printer = require("./src/printers/printer");
+const utilsTrophies = require("./src/utils/trophies");
 
 async function main(url) {
   // Scrape the guide information
@@ -37,6 +38,15 @@ async function main(url) {
       cleanedUrl,
       trophyData.title
     );
+
+    trophyData.base = utilsTrophies.cleanTrophies(trophyData.base);
+    trophyData.base = utilsTrophies.completeMissingQueries(
+      trophyData.title,
+      trophyData.base
+    );
+    trophyData.base = utilsTrophies.appendGuideUrl(cleanedUrl, trophyData.base);
+
+    printer.printAsCSV(trophyData.base, trophyData.title);
 
     console.log("Operation finished! File saved in " + result.path);
   } catch (err) {

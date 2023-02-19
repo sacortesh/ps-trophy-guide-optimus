@@ -39,15 +39,15 @@ async function downloadStyles(html) {
     }
 
     // Download the CSS content
-    const response = await axios.get(href);
+    //const response = await axios.get(href);
 
     if (href.includes("psnprofiles.css")) {
-      //mod
-      //htmlContent
-      // min-width: 1070px;
+     
       css.push(await loadCSSFromFile("./src/printers/psnprofiles.css"));
-    } else {
-      css.push(response.data);
+    } else if (href.includes("flexboxgrid")) {
+      css.push(await loadCSSFromFile("./src/printers/flexboxgrid.min.css"));
+    } else if (href.includes("forms.css")) {
+      css.push(await loadCSSFromFile("./src/printers/forms.css"));
     }
   }
   return css;
@@ -198,7 +198,9 @@ async function printAsPdf(htmlContent, url, title = "game") {
     cleanHtml = cleanHtml.replace(SCRIPT_REGEX, "");
   }
 
-  fs.writeFile("index.html", cleanHtml, (err) => {
+  const gen = generateFileName(title);
+
+  fs.writeFile(`${gen}.html`, cleanHtml, (err) => {
     if (err) {
       console.error(err);
     }
@@ -206,13 +208,8 @@ async function printAsPdf(htmlContent, url, title = "game") {
     console.log("HTML file created successfully.");
   });
 
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
-
   return new Promise((resolve, reject) => {
-    const path = `./${year}-${month}-${day}-${title}-guide.pdf`;
+    const path = `./${gen}.pdf`;
     pdf
       .create(cleanHtml, {
         format: "A4",
@@ -233,6 +230,51 @@ async function printAsPdf(htmlContent, url, title = "game") {
   });
 }
 
+function generateFileName(title){
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+
+  return `${year}-${month}-${day}-${title}-guide`;
+}
+
+function printAsCSV(jsonData, title) {
+  // Get headers from the first object in the array
+  const headers = Object.keys(jsonData[0]);
+
+  // Map each object in the array to an array of its values
+  const values = jsonData.map((obj) => Object.values(obj));
+
+  // Combine headers and values into a CSV string
+  let csvData = `${headers.join(";")}\n;`
+  
+  jsonData.forEach(element => {
+    let values = Object.values(element)
+      .map((value) => {
+        if (Array.isArray(value)) {
+          return value.join(',');
+        } else {
+          return value.toString().replace(/"/g, '""');
+        }
+      });  
+      csvData += '"' + values.join('"' + ';' + '"') + '"\n';
+  });
+  
+  console.log(csvData);
+
+  const gen = generateFileName(title);
+
+  fs.writeFile(gen + ".csv", csvData, (err) => {
+    if (err) {
+      console.error(err);
+    }
+
+    console.log("CSV file created successfully.");
+  });
+}
+
 module.exports = {
   printAsPdf: printAsPdf,
+  printAsCSV: printAsCSV
 };

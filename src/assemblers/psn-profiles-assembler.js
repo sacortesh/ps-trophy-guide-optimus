@@ -21,7 +21,7 @@ function assembleGuide(htmlContent, trophyData, title) {
   });
 }
 
-function injectThrophyRarity(htmlContent, trophyData, title) {
+function injectThrophyRarity(htmlContent, trophiesData, title) {
   let i = 1;
   let tableSelctor = "#roadmapStep" + i;
   let $ = cheerio.load(htmlContent);
@@ -36,29 +36,34 @@ function injectThrophyRarity(htmlContent, trophyData, title) {
         // div.col-xs-6:nth-child(11) > div:nth-child(1) trophy flex v-align
         // if earned add class earned
 
-        let trop = $(element).find("a").text().trim();
-        let tropData = getTrophyData(trophyData, trop);
+        let trophyId = $(element).find("a").text().trim();
+        let tropUrl = $(element).find("a").attr("href");
+        let trophyData = getTrophyData(trophiesData, trophyId);
 
-        if (tropData.earned) {
+        trophiesData = addTrophyUrl(trophiesData, trophyId, tropUrl);
+        trophiesData = addSuggestedStage(trophiesData, trophyId, i);
+
+        if (trophyData.earned) {
           let elem = $(element).find(".trophy.flex.v-align");
           elem.addClass("earned");
         }
 
         let div = $(element).find("div:nth-child(1) > div:nth-child(2)");
 
-        let score = tags.getTagsPriority(tropData.tags);
+        let score = tags.getTagsPriority(trophyData.tags);
         let value = Math.round(
-          parseFloat(tropData.psnpRarityValue.replace("%", ""))
+          parseFloat(trophyData.psnpRarityValue.replace("%", ""))
         );
         score = score + value;
+        trophiesData = addTrophyScore(trophiesData, trophyId, score);
 
         console.log("score: " + score);
 
         $(element).attr("scoreValue", score);
 
         let tagsF =
-          tropData.tags.length > 0
-            ? tropData.tags
+          trophyData.tags.length > 0
+            ? trophyData.tags
                 .map((tag) => `<span class="tag">${tag}</span>`)
                 .join("\n")
             : "";
@@ -67,9 +72,11 @@ function injectThrophyRarity(htmlContent, trophyData, title) {
           "https://www.youtube.com/results?search_query=" +
           title +
           " " +
-          tropData.title +
+          trophyData.title +
           " trophy guide";
         youtubeQuery = youtubeQuery.replace(/\s/g, "+");
+
+        trophiesData = addTrophyYoutubeQuery(trophiesData, trophyId, youtubeQuery);
 
         let youtube =
           '<span class="tag Type">' +
@@ -84,9 +91,9 @@ function injectThrophyRarity(htmlContent, trophyData, title) {
 
         let spanRarity =
           '<span class="typo-bottom">' +
-          tropData.psnpRarityValue +
+          trophyData.psnpRarityValue +
           " (" +
-          tropData.psnpRarity +
+          trophyData.psnpRarity +
           ")</span>";
 
         $(div).find("div:nth-child(1)").append(spanRarity);
@@ -126,6 +133,43 @@ function injectThrophyRarity(htmlContent, trophyData, title) {
 function getTrophyData(trophies, title) {
   let result = trophies.find((trophy) => trophy.title === title);
   return result || {};
+}
+
+function addTrophyYoutubeQuery(trophies, title, url) {
+  let trophyToUpdate = trophies.find((trophy) => trophy.title === title);
+
+  if (trophyToUpdate) {
+    trophyToUpdate.youtubeQuery = url;
+  }
+  return trophies;
+}
+
+
+function addTrophyUrl(trophies, title, url) {
+  let trophyToUpdate = trophies.find((trophy) => trophy.title === title);
+
+  if (trophyToUpdate) {
+    trophyToUpdate.guideUrl = url;
+  }
+  return trophies;
+}
+
+function addTrophyScore(trophies, title, score) {
+  let trophyToUpdate = trophies.find((trophy) => trophy.title === title);
+
+  if (trophyToUpdate) {
+    trophyToUpdate.trophyScore = score;
+  }
+  return trophies;
+}
+
+function addSuggestedStage(trophies, title, stage) {
+  let trophyToUpdate = trophies.find((trophy) => trophy.title === title);
+
+  if (trophyToUpdate) {
+    trophyToUpdate.suggestedStage = stage;
+  }
+  return trophies;
 }
 
 function extractTrophyTags(htmlContent, trophyData) {
