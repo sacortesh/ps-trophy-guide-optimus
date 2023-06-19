@@ -236,7 +236,9 @@ function generateFileName(title){
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
 
-  return `${year}-${month}-${day}-${title}-guide`;
+  const titleFormatted = title.replace(/[:\/\\*\?\"\<\>\|]/g, '_');
+
+  return `${year}-${month}-${day}-${titleFormatted}-guide`;
 }
 
 function printAsCSV(jsonData, title) {
@@ -274,7 +276,22 @@ function printAsCSV(jsonData, title) {
   });
 }
 
+function printAsMD(guide, title) {
+  console.warn('Printing');
+
+  const gen = generateFileName(title);
+
+  fs.writeFile(gen + ".md", guide, (err) => {
+    if (err) {
+      console.error(err);
+    }
+
+    console.log("CSV file created successfully.");
+  });
+}
+
 module.exports = {
+  printAsMD: printAsMD,
   printAsPdf: printAsPdf,
   printAsCSV: printAsCSV
 };

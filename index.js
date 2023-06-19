@@ -2,6 +2,8 @@ const scraperGuide = require("./src/scrapers/psn-profiles-guide");
 const scraperGame = require("./src/scrapers/psn-profiles-game");
 
 const assemblerGuide = require("./src/assemblers/psn-profiles-assembler");
+const trueTrophiesAssemblerGuide = require("./src/assemblers/true-trophies-assembler");
+
 
 const printer = require("./src/printers/printer");
 const utilsTrophies = require("./src/utils/trophies");
@@ -13,7 +15,7 @@ async function main(url) {
     const cleanedUrl = parts[0];
 
     const guide = await scraperGuide.scrapeGuide(cleanedUrl);
-    const trophyData = await scraperGame.scrapeTrophies(guide.gameUrl);
+    const trophyData = await scraperGame.scrapeTrophies(guide.gameUrl, guide.source);
 
     console.log(
       "Found the following base trophies. Count " + trophyData.base.length
@@ -21,34 +23,66 @@ async function main(url) {
     trophyData.dlcs.forEach((dlc) => {
       console.log(
         "Found the following dlc trophies for DLC " +
-          dlc.name +
+          dlc.title +
           ". Count" +
           dlc.length
       );
     });
 
-    const updatedGuide = await assemblerGuide.assembleGuide(
-      guide.htmlContent,
-      trophyData.base,
-      trophyData.title
-    );
+    console.log('Starting assmbly');
 
-    const result = await printer.printAsPdf(
-      updatedGuide.htmlContent,
-      cleanedUrl,
-      trophyData.title
-    );
+    if(guide.source === 'psnprofiles'){
+      const updatedGuide = await assemblerGuide.assembleGuide(
+        guide.htmlContent,
+        trophyData.base,
+        trophyData.title
+      );
+  
+      const result = await printer.printAsPdf(
+        updatedGuide.htmlContent,
+        cleanedUrl,
+        trophyData.title
+      );
+  
+      trophyData.base = utilsTrophies.cleanTrophies(trophyData.base);
+      trophyData.base = utilsTrophies.completeMissingQueries(
+        trophyData.title,
+        trophyData.base
+      );
+      trophyData.base = utilsTrophies.appendGuideUrl(cleanedUrl, trophyData.base);
+  
+      printer.printAsCSV(trophyData.base, trophyData.title);
+  
+      console.log("Operation finished! File saved in " + result.path);
+    } else {
+      trophyData.base = utilsTrophies.completeMissingQueries(
+        trophyData.title,
+        trophyData.base
+      );
 
-    trophyData.base = utilsTrophies.cleanTrophies(trophyData.base);
-    trophyData.base = utilsTrophies.completeMissingQueries(
-      trophyData.title,
-      trophyData.base
-    );
-    trophyData.base = utilsTrophies.appendGuideUrl(cleanedUrl, trophyData.base);
+      trophyData.base = trueTrophiesAssemblerGuide.completeTrophiesScore(
+        trophyData.base
+      );
 
-    printer.printAsCSV(trophyData.base, trophyData.title);
+      trophyData.dlcs.forEach((dlc) => {
+        dlc.trophies = utilsTrophies.completeMissingQueries(
+          trophyData.title,
+          dlc.trophies
+        );
+        dlc.trophies = trueTrophiesAssemblerGuide.completeTrophiesScore(
+          dlc.trophies
+        );
+      });
 
-    console.log("Operation finished! File saved in " + result.path);
+      let guide = trueTrophiesAssemblerGuide.generateMarkdownGuide(trophyData);
+      printer.printAsMD(guide, trophyData.title);
+
+      console.log('Guide created');
+
+    }
+
+
+    
   } catch (err) {
     console.error("Operation failed!", err);
   }

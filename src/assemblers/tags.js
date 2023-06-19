@@ -117,7 +117,7 @@ const getTagPriority = (name) => {
   return 0;
 };
 
-const getTagsPriority = (arrayOfTags) => {
+const getTagsPriority = (arrayOfTags = []) => {
     let result = 0;
     arrayOfTags.forEach(element => {
         result += getTagPriority(element);

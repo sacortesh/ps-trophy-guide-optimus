@@ -38,65 +38,73 @@ function injectThrophyRarity(htmlContent, trophiesData, title) {
 
         let trophyId = $(element).find("a").text().trim();
         let tropUrl = $(element).find("a").attr("href");
+        console.log('Assmbling with this data:');
+        console.log(JSON.stringify(trophiesData));
         let trophyData = getTrophyData(trophiesData, trophyId);
-
-        trophiesData = addTrophyUrl(trophiesData, trophyId, tropUrl);
-        trophiesData = addSuggestedStage(trophiesData, trophyId, i);
-
-        if (trophyData.earned) {
-          let elem = $(element).find(".trophy.flex.v-align");
-          elem.addClass("earned");
+        
+        if(trophyData){
+          console.log('valtrop: ' + trophyData);
+          trophiesData = addTrophyUrl(trophiesData, trophyId, tropUrl);
+          trophiesData = addSuggestedStage(trophiesData, trophyId, i);
+  
+          if (trophyData.earned) {
+            let elem = $(element).find(".trophy.flex.v-align");
+            elem.addClass("earned");
+          }
+  
+          let div = $(element).find("div:nth-child(1) > div:nth-child(2)");
+  
+          let score = tags.getTagsPriority(trophyData.tags);
+          console.log('TD:' + trophyData.title + trophyData.psnpRarityValue)
+          let value = Math.round(
+            parseFloat(trophyData.psnpRarityValue.replace("%", ""))
+          );
+          score = score + value;
+          trophiesData = addTrophyScore(trophiesData, trophyId, score);
+  
+          console.log("score: " + score);
+  
+          $(element).attr("scoreValue", score);
+  
+          let tagsF =
+            trophyData.tags.length > 0
+              ? trophyData.tags
+                  .map((tag) => `<span class="tag">${tag}</span>`)
+                  .join("\n")
+              : "";
+  
+          let youtubeQuery =
+            "https://www.youtube.com/results?search_query=" +
+            title +
+            " " +
+            trophyData.title +
+            " trophy guide";
+          youtubeQuery = youtubeQuery.replace(/\s/g, "+");
+  
+          trophiesData = addTrophyYoutubeQuery(trophiesData, trophyId, youtubeQuery);
+  
+          let youtube =
+            '<span class="tag Type">' +
+            '<a href="' +
+            youtubeQuery +
+            '" >Search on YouTube</a>' +
+            "</span>";
+  
+          let htmlTags = '<div class="ellipsis">' + youtube + tagsF + "</div>";
+  
+          $(div).append(htmlTags);
+  
+          let spanRarity =
+            '<span class="typo-bottom">' +
+            trophyData.psnpRarityValue +
+            " (" +
+            trophyData.psnpRarity +
+            ")</span>";
+  
+          $(div).find("div:nth-child(1)").append(spanRarity);
+  
         }
-
-        let div = $(element).find("div:nth-child(1) > div:nth-child(2)");
-
-        let score = tags.getTagsPriority(trophyData.tags);
-        let value = Math.round(
-          parseFloat(trophyData.psnpRarityValue.replace("%", ""))
-        );
-        score = score + value;
-        trophiesData = addTrophyScore(trophiesData, trophyId, score);
-
-        console.log("score: " + score);
-
-        $(element).attr("scoreValue", score);
-
-        let tagsF =
-          trophyData.tags.length > 0
-            ? trophyData.tags
-                .map((tag) => `<span class="tag">${tag}</span>`)
-                .join("\n")
-            : "";
-
-        let youtubeQuery =
-          "https://www.youtube.com/results?search_query=" +
-          title +
-          " " +
-          trophyData.title +
-          " trophy guide";
-        youtubeQuery = youtubeQuery.replace(/\s/g, "+");
-
-        trophiesData = addTrophyYoutubeQuery(trophiesData, trophyId, youtubeQuery);
-
-        let youtube =
-          '<span class="tag Type">' +
-          '<a href="' +
-          youtubeQuery +
-          '" >Search on YouTube</a>' +
-          "</span>";
-
-        let htmlTags = '<div class="ellipsis">' + youtube + tagsF + "</div>";
-
-        $(div).append(htmlTags);
-
-        let spanRarity =
-          '<span class="typo-bottom">' +
-          trophyData.psnpRarityValue +
-          " (" +
-          trophyData.psnpRarity +
-          ")</span>";
-
-        $(div).find("div:nth-child(1)").append(spanRarity);
+        
       });
 
       let containersArray = $(containers)
@@ -131,8 +139,9 @@ function injectThrophyRarity(htmlContent, trophiesData, title) {
 }
 
 function getTrophyData(trophies, title) {
+  console.log('Searching ' + title);
   let result = trophies.find((trophy) => trophy.title === title);
-  return result || {};
+  return result;
 }
 
 function addTrophyYoutubeQuery(trophies, title, url) {
@@ -195,8 +204,12 @@ function extractTrophyTags(htmlContent, trophyData) {
       trophies: links,
     });
   });
+  console.log('LOVA');
 
+  console.log(trophiesPerTag);
+  console.log(trophyData);
   let trophies = consolidateTrophyList(trophiesPerTag, trophyData);
+
   return trophies;
 }
 
