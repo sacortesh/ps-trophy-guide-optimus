@@ -74,8 +74,9 @@ async function main(url) {
         );
       });
 
-      let guide = trueTrophiesAssemblerGuide.generateMarkdownGuide(trophyData);
-      printer.printAsMD(guide, trophyData.title);
+      let guide = trueTrophiesAssemblerGuide.generateCSVGuide(trophyData);
+
+      printer.printCSV(trophyData.title, guide);
 
       console.log('Guide created');
 

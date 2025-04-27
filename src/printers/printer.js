@@ -264,7 +264,10 @@ function printAsCSV(jsonData, title) {
   });
   
   console.log(csvData);
+  printCSV(title, csvData);
+}
 
+function printCSV(title, csvData){
   const gen = generateFileName(title);
 
   fs.writeFile(gen + ".csv", csvData, (err) => {
@@ -293,5 +296,6 @@ function printAsMD(guide, title) {
 module.exports = {
   printAsMD: printAsMD,
   printAsPdf: printAsPdf,
-  printAsCSV: printAsCSV
+  printAsCSV: printAsCSV,
+  printCSV: printCSV
 };
