@@ -41,47 +41,116 @@ function extractTrophyData() {
   
   console.log('🎮 Game:', gameTitle);
   
-  // Find all trophy elements
-  const trophyElements = document.querySelectorAll('main article .ach-panels li');
-  console.log(`🏆 Found ${trophyElements.length} trophy elements`);
+  // Initialize result structure like your original code
+  const result = {
+    base: [],
+    dlcs: [],
+    title: gameTitle,
+    gameUrl: window.location.href
+  };
   
-  // Debug: Log the first few trophy elements
-  trophyElements.forEach((element, index) => {
-    if (index < 3) { // Only log first 3 for debugging
-      console.log(`Trophy ${index + 1} element:`, element);
-      console.log(`Trophy ${index + 1} title:`, element.querySelector('.title')?.textContent);
-    }
-  });
+  // Find all article elements (like your original code)
+  const articleElements = document.querySelectorAll('main article');
+  console.log(`📄 Found ${articleElements.length} article elements`);
   
-  let trophies = [];
+  let indexStore = 0;
+  let currentStore = 'base';
   
-  trophyElements.forEach((element, index) => {
-    try {
-      const trophy = extractTrophyFromElement(element);
-      if (trophy && trophy.title) {
-        // Calculate trophy score using your original logic
-        calculateTrophyScore(trophy);
-        trophies.push(trophy);
-        console.log(`✅ Extracted trophy ${index + 1}: ${trophy.title} (Score: ${trophy.trophyScore})`);
-      } else {
-        console.log(`⚠️ Skipped trophy ${index + 1}: no title found`);
+  articleElements.forEach((article, articleIndex) => {
+    console.log(`🔍 Processing article ${articleIndex + 1}`);
+    
+    // Process children of each article
+    const children = Array.from(article.children);
+    
+    children.forEach((element, childIndex) => {
+      // Check for DLC/game section headers
+      if (element.classList.contains('pnl-hd') && 
+          element.classList.contains('no-pills') && 
+          element.classList.contains('no-pr') && 
+          element.classList.contains('game')) {
+        
+        console.log('📋 Found game/DLC header');
+        
+        if (indexStore === 0) {
+          // First section is base game
+          result.base = [];
+          currentStore = 'base';
+          console.log('🎮 Base game section detected');
+        } else {
+          // Subsequent sections are DLCs
+          if (!result.dlcs) {
+            result.dlcs = [];
+          }
+          
+          const dlcTitle = element.querySelector('h2')?.textContent?.trim() || `Unnamed DLC ${indexStore}`;
+          result.dlcs.push({
+            title: dlcTitle,
+            trophies: []
+          });
+          
+          currentStore = `dlc_${indexStore - 1}`;
+          console.log(`📦 DLC section detected: ${dlcTitle}`);
+        }
+        
+        indexStore++;
+      } 
+      // Check for trophy panels
+      else if (element.classList.contains('ach-panels')) {
+        console.log('🏆 Found trophy list block');
+        
+        if (!indexStore) {
+          console.warn('⚠️ No DLC header before trophy list; assuming base game trophies');
+          indexStore++;
+        }
+        
+        const trophyElements = element.querySelectorAll('li');
+        console.log(`🏆 Found ${trophyElements.length} trophies in this section`);
+        
+        trophyElements.forEach((trophyElement, trophyIndex) => {
+          try {
+            const trophy = extractTrophyFromElement(trophyElement);
+            if (trophy && trophy.title) {
+              calculateTrophyScore(trophy);
+              
+              // Add to appropriate section
+              if (indexStore === 1) {
+                // Base game trophies
+                result.base.push(trophy);
+                console.log(`✅ Added base trophy: ${trophy.title}`);
+              } else {
+                // DLC trophies
+                const dlcIndex = indexStore - 2;
+                if (result.dlcs[dlcIndex]) {
+                  result.dlcs[dlcIndex].trophies.push(trophy);
+                  console.log(`✅ Added DLC trophy: ${trophy.title} to ${result.dlcs[dlcIndex].title}`);
+                }
+              }
+            }
+          } catch (error) {
+            console.error(`❌ Error extracting trophy ${trophyIndex + 1}:`, error);
+          }
+        });
       }
-    } catch (error) {
-      console.error(`❌ Error extracting trophy ${index + 1}:`, error);
-    }
+    });
   });
   
-  // Apply your original processing functions
-  trophies = completeMissingQueries(gameTitle, trophies);
+  // Apply processing functions to all trophies
+  result.base = completeMissingQueries(gameTitle, result.base);
+  if (result.dlcs) {
+    result.dlcs.forEach(dlc => {
+      dlc.trophies = completeMissingQueries(gameTitle, dlc.trophies);
+    });
+  }
   
-  console.log(`✅ Successfully extracted ${trophies.length} trophies`);
+  const totalTrophies = result.base.length + (result.dlcs?.reduce((sum, dlc) => sum + dlc.trophies.length, 0) || 0);
+  console.log(`✅ Successfully extracted ${totalTrophies} total trophies`);
+  console.log(`   - Base game: ${result.base.length} trophies`);
+  console.log(`   - DLCs: ${result.dlcs?.length || 0} sets with ${result.dlcs?.reduce((sum, dlc) => sum + dlc.trophies.length, 0) || 0} trophies`);
   
   return {
     success: true,
-    trophies: trophies,
-    trophyCount: trophies.length,
-    gameTitle: gameTitle,
-    gameUrl: window.location.href
+    ...result,
+    trophyCount: totalTrophies
   };
 }
 

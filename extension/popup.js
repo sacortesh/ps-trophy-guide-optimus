@@ -7,6 +7,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const gameInfo = document.getElementById('gameInfo');
   const gameTitle = document.getElementById('gameTitle');
   const trophyCount = document.getElementById('trophyCount');
+  
+  // Affiliate section elements
+  const affiliateSection = document.getElementById('affiliateSection');
+  const affiliateGameTitle = document.getElementById('affiliateGameTitle');
+  const affiliateGame = document.getElementById('affiliateGame');
+  const affiliateAccessories = document.getElementById('affiliateAccessories');
+  const affiliateMerch = document.getElementById('affiliateMerch');
+  const affiliateCollectibles = document.getElementById('affiliateCollectibles');
 
   // Test connection first
   testConnection();
@@ -73,6 +81,10 @@ document.addEventListener('DOMContentLoaded', function() {
           trophyCount.textContent = response.trophyCount;
           gameInfo.style.display = 'block';
           
+          // Generate and show affiliate links
+          generateAffiliateLinks(response.gameTitle || 'Unknown Game');
+          affiliateSection.style.display = 'block';
+          
           // Enable export button
           exportBtn.disabled = false;
           clearBtn.disabled = false;
@@ -128,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
       status.textContent = '🗑️ Data cleared';
       status.className = 'status info';
       gameInfo.style.display = 'none';
+      affiliateSection.style.display = 'none';
       exportBtn.disabled = true;
       clearBtn.disabled = true;
     });
@@ -186,5 +199,34 @@ document.addEventListener('DOMContentLoaded', function() {
   // Sanitize filename
   function sanitizeFilename(filename) {
     return filename.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  }
+
+  // Generate dynamic affiliate links based on game title
+  function generateAffiliateLinks(gameTitle) {
+    console.log('🛒 Generating affiliate links for:', gameTitle);
+    
+    // Clean the game title for search queries
+    const cleanTitle = gameTitle.replace(/[^\w\s]/g, '').trim();
+    const searchQuery = encodeURIComponent(cleanTitle);
+    
+    // Your Amazon Associates affiliate ID (replace with your actual ID)
+    const affiliateId = 'trophygui-20'; // Replace with your Amazon Associates ID
+    
+    // Generate different types of affiliate links
+    const affiliateLinks = {
+      game: `https://amazon.com/s?k=${searchQuery}+PS4+PS5+game&tag=${affiliateId}`,
+      accessories: `https://amazon.com/s?k=${searchQuery}+controller+headset+gaming&tag=${affiliateId}`,
+      merch: `https://amazon.com/s?k=${searchQuery}+shirt+hoodie+merchandise&tag=${affiliateId}`,
+      collectibles: `https://amazon.com/s?k=${searchQuery}+collector+edition+figure&tag=${affiliateId}`
+    };
+    
+    // Update the affiliate section
+    affiliateGameTitle.textContent = gameTitle;
+    affiliateGame.href = affiliateLinks.game;
+    affiliateAccessories.href = affiliateLinks.accessories;
+    affiliateMerch.href = affiliateLinks.merch;
+    affiliateCollectibles.href = affiliateLinks.collectibles;
+    
+    console.log('✅ Affiliate links generated:', affiliateLinks);
   }
 });
