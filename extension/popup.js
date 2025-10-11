@@ -1,4 +1,4 @@
-// Popup script for the Chrome extension
+// Debug popup script with connection testing
 document.addEventListener('DOMContentLoaded', function() {
   const extractBtn = document.getElementById('extractBtn');
   const exportBtn = document.getElementById('exportBtn');
@@ -8,18 +8,43 @@ document.addEventListener('DOMContentLoaded', function() {
   const gameTitle = document.getElementById('gameTitle');
   const trophyCount = document.getElementById('trophyCount');
 
-  // Check if we're on a supported page
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    const currentTab = tabs[0];
-    if (currentTab.url.includes('truetrophies.com/game/') && currentTab.url.includes('/trophies')) {
-      status.textContent = '✅ Ready to extract from this page';
-      status.className = 'status success';
-    } else {
-      status.textContent = '⚠️ Please navigate to a TrueTrophies game trophy page';
-      status.className = 'status error';
-      extractBtn.disabled = true;
-    }
-  });
+  // Test connection first
+  testConnection();
+
+  function testConnection() {
+    status.textContent = '🔄 Testing connection...';
+    status.className = 'status info';
+
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      const currentTab = tabs[0];
+      console.log('Current tab:', currentTab.url);
+      
+      if (currentTab.url.includes('truetrophies.com/game/') && currentTab.url.includes('/trophies')) {
+        // Send ping to test connection
+        chrome.tabs.sendMessage(tabs[0].id, {action: 'ping'}, function(response) {
+          if (chrome.runtime.lastError) {
+            console.error('Connection error:', chrome.runtime.lastError);
+            status.textContent = '❌ Connection failed: ' + chrome.runtime.lastError.message;
+            status.className = 'status error';
+            extractBtn.disabled = true;
+          } else if (response && response.status === 'pong') {
+            console.log('Connection successful:', response);
+            status.textContent = '✅ Connected! Ready to extract from: ' + response.url;
+            status.className = 'status success';
+            extractBtn.disabled = false;
+          } else {
+            status.textContent = '⚠️ Unexpected response: ' + JSON.stringify(response);
+            status.className = 'status error';
+            extractBtn.disabled = true;
+          }
+        });
+      } else {
+        status.textContent = '⚠️ Please navigate to a TrueTrophies game trophy page';
+        status.className = 'status error';
+        extractBtn.disabled = true;
+      }
+    });
+  }
 
   // Extract trophy data
   extractBtn.addEventListener('click', function() {
@@ -30,11 +55,14 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {action: 'extractTrophies'}, function(response) {
         if (chrome.runtime.lastError) {
+          console.error('Extraction error:', chrome.runtime.lastError);
           status.textContent = '❌ Error: ' + chrome.runtime.lastError.message;
           status.className = 'status error';
           extractBtn.disabled = false;
           return;
         }
+
+        console.log('Extraction response:', response);
 
         if (response && response.success) {
           status.textContent = `✅ Extracted ${response.trophyCount} trophies`;
@@ -56,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
             gameUrl: response.gameUrl
           });
         } else {
-          status.textContent = '❌ Failed to extract trophy data';
+          status.textContent = '❌ Failed to extract trophy data: ' + (response?.error || 'Unknown error');
           status.className = 'status error';
         }
         

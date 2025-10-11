@@ -1,20 +1,235 @@
-// Content script that runs on TrueTrophies pages
+const TT_TAGS_DICTIONNARY = [
+  {
+    order: 2,
+    description:
+      "require a connection to live services, such as Xbox Live, for playing an online game mode, for sharing content, accessing leaderboards, or validating data with a server.",
+    name: "Online Game Mode",
+    priority: 2000,
+  },
+  {
+    order: 1,
+    description:
+      "require play in game modes that do not necessitate a connection to any online services.",
+    name: "Offline Game Mode",
+    priority: 0,
+  },
+  {
+    order: 3,
+    description: "can be obtained in either an online or offline game mode.",
+    name: "Online/Offline",
+    priority: 0,
+  },
+  {
+    order: 4,
+    description: "can be obtained by a single player.",
+    name: "Single Player",
+    priority: 0,
+  },
+  {
+    order: 9,
+    description: "are gained automatically by progressing through the main game modes.",
+    name: "Main Storyline",
+    priority: 0,
+  },
+  {
+    order: 11,
+    description: "require that the game be played on a certain difficulty level.",
+    name: "Difficulty Specific",
+    priority: 1500,
+  },
+  {
+    order: 12,
+    description:
+      "can be unlocked at the same time as, or in the course of, earning its more difficult or less difficult counterpart.",
+    name: "Stackable",
+    priority: 1500,
+  },
+  {
+    order: 13,
+    description: "are obtained by exploring the game environment to find a set of unique objects.",
+    name: "Collectable",
+    priority: 1000,
+  },
+  {
+    order: 14,
+    description: "are obtained by repeatedly performing the same action or set of actions over time.",
+    name: "Cumulative +",
+    priority: 1000,
+  },
+  {
+    order: 19,
+    description:
+      "are obtained by contact with a player who meets the requirements for spreading it to others.",
+    name: "Viral",
+    priority: 1250,
+  },
+  {
+    order: 20,
+    description: "require a certain TrueSkill rank or a certain position on a Leaderboard to be reached.",
+    name: "Online Skill",
+    priority: 2500,
+  },
+  {
+    order: 25,
+    description: "require at least 20 hours of play time to obtain.",
+    name: "Time Consuming",
+    priority: 1000,
+  },
+  {
+    order: 13,
+    description: "can be missed.",
+    name: "Missable",
+    priority: 1500,
+  },
+  {
+    order: 27,
+    description: "may unlock after the requirements have been met or not at all.",
+    name: "Buggy -",
+    priority: 1200,
+  },
+  {
+    order: 30,
+    description: "have never been possible to unlock legitimately.",
+    name: "Unobtainable",
+    priority: 4000,
+  },
+  {
+    order: 29,
+    description:
+      "can no longer be obtained due to closed servers, a bad patch, or other unusual circumstances.",
+    name: "Discontinued",
+    priority: 4000,
+  },
+  {
+    order: 18,
+    description:
+      "require the purchase of an item or a series of items as prerequisites from a shop.",
+    name: "Shop",
+    priority: 1200,
+  },
+  {
+    order: 26,
+    description: "may unlock before the requirements have been met.",
+    name: "Buggy +",
+    priority: 1100,
+  },
+  {
+    order: 17,
+    description: "must be obtained by levelling up in-game components.",
+    name: "Level",
+    priority: 1100,
+  },
+  {
+    order: 8,
+    description: "can be unlocked by interactions with a community.",
+    name: "Community",
+    priority: 1200,
+  },
+  {
+    order: 28,
+    description:
+      "may no longer be obtainable by players who have not already met specific requirements.",
+    name: "Partly Discontinued/Unobtainable",
+    priority: 3500,
+  },
+  {
+    order: 23,
+    description: "cannot be earned during the initial playthrough.",
+    name: "Multiple Playthroughs Required",
+    priority: 1100,
+  },
+  {
+    order: 15,
+    description:
+      "are obtained by repeatedly performing the same action or set of actions over time, but progress can diminish",
+    name: "Cumulative -",
+    priority: 1500,
+  },
+  {
+    order: 5,
+    description:
+      "can be obtained by two or more players in a cooperative game mode who have met the achievement requirements.",
+    name: "Cooperative",
+    priority: 2000,
+  },
+  {
+    order: 6,
+    description:
+      "can be obtained by two or more players in a face off gamemode who have met the achievement requirements.",
+    name: "Versus",
+    priority: 2000,
+  },
+  {
+    order: 7,
+    description: "are only earned by the host or primary player.",
+    name: "Host Only",
+    priority: 2000,
+  },
+  {
+    order: 24,
+    description:
+      "require content outside the game or input devices other than the system default.",
+    name: "External Content",
+    priority: 3000,
+  },
+  {
+    order: 22,
+    description:
+      "require you to play the game or perform actions at certain times, within a time limit, or on specific dates.",
+    name: "Time/Date",
+    priority: 3000,
+  },
+  {
+    order: 21,
+    description: "require a minimum number of participating players to attempt.",
+    name: "Players Required",
+    priority: 2000,
+  },
+  {
+    order: 31,
+    description: "require you to obtain all other trophies within the base game.",
+    name: "Platinum",
+    priority: 5000,
+  },
+  {
+    order: 10,
+    description: "are obtained upon completing the story within a game.",
+    name: "Story Completed",
+    priority: 500,
+  },
+];
+
+// Debug version of content script with more logging
 console.log('🏆 TrueTrophies Data Extractor loaded');
+console.log('📍 Current URL:', window.location.href);
+console.log('📍 Page title:', document.title);
 
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  console.log('📨 Message received:', request);
+  
   if (request.action === 'extractTrophies') {
+    console.log('🔄 Starting trophy extraction...');
+    
     try {
       const result = extractTrophyData();
+      console.log('✅ Extraction result:', result);
       sendResponse(result);
     } catch (error) {
-      console.error('Error extracting trophy data:', error);
+      console.error('❌ Error extracting trophy data:', error);
       sendResponse({
         success: false,
         error: error.message
       });
     }
     return true; // Keep message channel open for async response
+  }
+  
+  // Handle other messages
+  if (request.action === 'ping') {
+    console.log('🏓 Ping received, responding with pong');
+    sendResponse({status: 'pong', url: window.location.href});
+    return true;
   }
 });
 
@@ -25,13 +240,21 @@ function extractTrophyData() {
   const gameTitleElement = document.querySelector('main h2');
   const gameTitle = gameTitleElement ? gameTitleElement.textContent.trim() : 'Unknown Game';
   
-  console.log('Game:', gameTitle);
+  console.log('🎮 Game:', gameTitle);
   
   // Find all trophy elements
   const trophyElements = document.querySelectorAll('main article .ach-panels li');
-  console.log(`Found ${trophyElements.length} trophy elements`);
+  console.log(`🏆 Found ${trophyElements.length} trophy elements`);
   
-  const trophies = [];
+  // Debug: Log the first few trophy elements
+  trophyElements.forEach((element, index) => {
+    if (index < 3) { // Only log first 3 for debugging
+      console.log(`Trophy ${index + 1} element:`, element);
+      console.log(`Trophy ${index + 1} title:`, element.querySelector('.title')?.textContent);
+    }
+  });
+  
+  let trophies = [];
   
   trophyElements.forEach((element, index) => {
     try {
@@ -120,26 +343,15 @@ function extractTrophyFromElement(element) {
     const infoElement = element.querySelector('div.info');
     if (infoElement) {
       const tagElements = infoElement.querySelectorAll('i');
-      trophy.tags = Array.from(tagElements).map(tag => {
-        const className = tag.className;
-        const tagName = getTagNameFromClass(className);
-        const tagData = getTagDataFromName(tagName);
-        return {
-          name: tagName,
-          class: className,
-          priority: tagData.priority,
-          description: tagData.description
-        };
-      });
+      const tagClass = tagElements[0].className;
+      const trophyTags = getTagsFromClass(tagClass);
+      trophy.tags = trophyTags;
     }
 
     // Check if trophy is earned (completed)
     if (element.classList.contains('completed') || element.querySelector('.completed')) {
       trophy.earned = true;
     }
-
-    // Generate YouTube query for trophy guide
-    trophy.youtubeQuery = `${gameTitle} ${trophy.title} trophy guide`;
 
   } catch (error) {
     console.error('Error extracting trophy data:', error);
@@ -148,82 +360,23 @@ function extractTrophyFromElement(element) {
   return trophy;
 }
 
-function getTagNameFromClass(className) {
-  // Map CSS classes to tag names based on your existing tag dictionary
-  const tagMap = {
-    'flg-1': 'Offline Game Mode',
-    'flg-2': 'Online Game Mode', 
-    'flg-3': 'Online/Offline',
-    'flg-4': 'Single Player',
-    'flg-5': 'Cooperative',
-    'flg-6': 'Versus',
-    'flg-7': 'Host Only',
-    'flg-8': 'Community',
-    'flg-9': 'Main Storyline',
-    'flg-10': 'Story Completed',
-    'flg-11': 'Difficulty Specific',
-    'flg-12': 'Stackable',
-    'flg-13': 'Collectable',
-    'flg-14': 'Cumulative +',
-    'flg-15': 'Cumulative -',
-    'flg-16': 'Level',
-    'flg-17': 'Shop',
-    'flg-18': 'Viral',
-    'flg-19': 'Online Skill',
-    'flg-20': 'Players Required',
-    'flg-21': 'Time/Date',
-    'flg-22': 'External Content',
-    'flg-23': 'Multiple Playthroughs Required',
-    'flg-24': 'Missable',
-    'flg-25': 'Buggy +',
-    'flg-26': 'Buggy -',
-    'flg-27': 'Discontinued',
-    'flg-28': 'Partly Discontinued/Unobtainable',
-    'flg-29': 'Unobtainable',
-    'flg-30': 'Time Consuming',
-    'flg-31': 'Platinum'
-  };
+function getTagsFromClass(tagClass) {
+  let classesDetected = [];
 
-  return tagMap[className] || className;
-}
+  let zeroString = "00000000000000000000000000000000";
+  let binaryTagClass = (
+    zeroString + parseInt(tagClass.replace("flg-", ""), 16).toString(2)
+  ).slice(-zeroString.length);
 
-function getTagDataFromName(tagName) {
-  // Tag dictionary with priority and description from your original code
-  const tagDictionary = {
-    'Offline Game Mode': { priority: 0, description: 'require play in game modes that do not necessitate a connection to any online services.' },
-    'Online Game Mode': { priority: 2000, description: 'require a connection to live services, such as Xbox Live, for playing an online game mode, for sharing content, accessing leaderboards, or validating data with a server.' },
-    'Online/Offline': { priority: 0, description: 'can be obtained in either an online or offline game mode.' },
-    'Single Player': { priority: 0, description: 'can be obtained by a single player.' },
-    'Main Storyline': { priority: 0, description: 'are gained automatically by progressing through the main game modes.' },
-    'Difficulty Specific': { priority: 1500, description: 'require that the game be played on a certain difficulty level.' },
-    'Stackable': { priority: 1500, description: 'can be unlocked at the same time as, or in the course of, earning its more difficult or less difficult counterpart.' },
-    'Collectable': { priority: 1000, description: 'are obtained by exploring the game environment to find a set of unique objects.' },
-    'Cumulative +': { priority: 1000, description: 'are obtained by repeatedly performing the same action or set of actions over time.' },
-    'Viral': { priority: 1250, description: 'are obtained by contact with a player who meets the requirements for spreading it to others.' },
-    'Online Skill': { priority: 2500, description: 'require a certain TrueSkill rank or a certain position on a Leaderboard to be reached.' },
-    'Time Consuming': { priority: 1000, description: 'require at least 20 hours of play time to obtain.' },
-    'Missable': { priority: 1500, description: 'can be missed.' },
-    'Buggy -': { priority: 1200, description: 'may unlock after the requirements have been met or not at all.' },
-    'Unobtainable': { priority: 4000, description: 'have never been possible to unlock legitimately.' },
-    'Discontinued': { priority: 4000, description: 'can no longer be obtained due to closed servers, a bad patch, or other unusual circumstances.' },
-    'Shop': { priority: 1200, description: 'require the purchase of an item or a series of items as prerequisites from a shop.' },
-    'Buggy +': { priority: 1100, description: 'may unlock before the requirements have been met.' },
-    'Level': { priority: 1100, description: 'must be obtained by levelling up in-game components.' },
-    'Community': { priority: 1200, description: 'can be unlocked by interactions with a community.' },
-    'Partly Discontinued/Unobtainable': { priority: 3500, description: 'may no longer be obtainable by players who have not already met specific requirements.' },
-    'Multiple Playthroughs Required': { priority: 1100, description: 'cannot be earned during the initial playthrough.' },
-    'Cumulative -': { priority: 1500, description: 'are obtained by repeatedly performing the same action or set of actions over time, but progress can diminish' },
-    'Cooperative': { priority: 2000, description: 'can be obtained by two or more players in a cooperative game mode who have met the achievement requirements.' },
-    'Versus': { priority: 2000, description: 'can be obtained by two or more players in a face off gamemode who have met the achievement requirements.' },
-    'Host Only': { priority: 2000, description: 'are only earned by the host or primary player.' },
-    'External Content': { priority: 3000, description: 'require content outside the game or input devices other than the system default.' },
-    'Time/Date': { priority: 3000, description: 'require you to play the game or perform actions at certain times, within a time limit, or on specific dates.' },
-    'Players Required': { priority: 2000, description: 'require a minimum number of participating players to attempt.' },
-    'Platinum': { priority: 5000, description: 'require you to obtain all other trophies within the base game.' },
-    'Story Completed': { priority: 500, description: 'are obtained upon completing the story within a game.' }
-  };
+  // Iterate over the binary string
+  for (var n = 0; n < binaryTagClass.length; ++n) {
+    // If the binary digit is "1", push the corresponding flag data to the array
+    if (binaryTagClass[n] === "1") {
+      classesDetected.push(TT_TAGS_DICTIONNARY[n]);
+    }
+  }
 
-  return tagDictionary[tagName] || { priority: 0, description: '' };
+  return classesDetected;
 }
 
 function calculateTrophyScore(trophy) {

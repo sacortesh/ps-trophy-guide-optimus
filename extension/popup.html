@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <style>
     body {
-      width: 350px;
+      width: 400px;
       padding: 20px;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -32,6 +32,7 @@
       margin: 10px 0;
       text-align: center;
       font-weight: bold;
+      font-size: 12px;
     }
     
     .status.success {
@@ -89,6 +90,15 @@
       color: #FFD700;
     }
     
+    .debug-info {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-size: 10px;
+      font-family: monospace;
+    }
+    
     .instructions {
       font-size: 11px;
       opacity: 0.8;
@@ -102,7 +112,7 @@
     <h1>🏆 Trophy Data Extractor</h1>
     
     <div id="status" class="status info">
-      Ready to extract trophy data
+      Testing connection...
     </div>
     
     <div id="gameInfo" class="game-info" style="display: none;">
@@ -110,9 +120,15 @@
       <div><strong>Trophies Found:</strong> <span id="trophyCount" class="trophy-count">0</span></div>
     </div>
     
+    <div id="debugInfo" class="debug-info" style="display: none;">
+      <div><strong>Debug Info:</strong></div>
+      <div id="debugDetails">-</div>
+    </div>
+    
     <button id="extractBtn">📊 Extract Trophy Data</button>
     <button id="exportBtn" disabled>💾 Export to CSV</button>
     <button id="clearBtn" disabled>🗑️ Clear Data</button>
+    <button id="testBtn">🔧 Test Connection</button>
     
     <div class="instructions">
       <strong>Instructions:</strong><br>
@@ -120,6 +136,7 @@
       2. Click "Extract Trophy Data"<br>
       3. Click "Export to CSV" to download<br>
       <br>
+      <strong>Debug:</strong> Check browser console for detailed logs<br>
       <strong>Supported:</strong> TrueTrophies game trophy pages
     </div>
   </div>
