@@ -361,22 +361,27 @@ function extractTrophyFromElement(element) {
 }
 
 function getTagsFromClass(tagClass) {
-  let classesDetected = [];
+  if (!tagClass || !tagClass.startsWith('flg-')) {
+    return [];
+  }
 
-  let zeroString = "00000000000000000000000000000000";
-  let binaryTagClass = (
-    zeroString + parseInt(tagClass.replace("flg-", ""), 16).toString(2)
-  ).slice(-zeroString.length);
+  const detectedTags = [];
+  const hexValue = tagClass.replace('flg-', '');
+  const flagValue = parseInt(hexValue, 16);
+  
+  if (isNaN(flagValue)) {
+    return [];
+  }
 
-  // Iterate over the binary string
-  for (var n = 0; n < binaryTagClass.length; ++n) {
-    // If the binary digit is "1", push the corresponding flag data to the array
-    if (binaryTagClass[n] === "1") {
-      classesDetected.push(TT_TAGS_DICTIONNARY[n]);
+  const binaryString = flagValue.toString(2).padStart(32, '0');
+
+  for (let bitIndex = 0; bitIndex < binaryString.length; bitIndex++) {
+    if (binaryString[bitIndex] === '1' && TT_TAGS_DICTIONNARY[bitIndex]) {
+      detectedTags.push(TT_TAGS_DICTIONNARY[bitIndex]);
     }
   }
 
-  return classesDetected;
+  return detectedTags;
 }
 
 function calculateTrophyScore(trophy) {
