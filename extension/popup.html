@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 350px;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      margin: 0;
+    }
+    
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+    }
+    
+    h1 {
+      margin: 0 0 20px 0;
+      font-size: 18px;
+      text-align: center;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .status {
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    .status.success {
+      background: rgba(76, 175, 80, 0.3);
+      border: 1px solid #4CAF50;
+    }
+    
+    .status.error {
+      background: rgba(244, 67, 54, 0.3);
+      border: 1px solid #f44336;
+    }
+    
+    .status.info {
+      background: rgba(33, 150, 243, 0.3);
+      border: 1px solid #2196F3;
+    }
+    
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+    
+    button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .game-info {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-size: 12px;
+    }
+    
+    .trophy-count {
+      font-size: 16px;
+      font-weight: bold;
+      color: #FFD700;
+    }
+    
+    .instructions {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-top: 15px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏆 Trophy Data Extractor</h1>
+    
+    <div id="status" class="status info">
+      Ready to extract trophy data
+    </div>
+    
+    <div id="gameInfo" class="game-info" style="display: none;">
+      <div><strong>Game:</strong> <span id="gameTitle">-</span></div>
+      <div><strong>Trophies Found:</strong> <span id="trophyCount" class="trophy-count">0</span></div>
+    </div>
+    
+    <button id="extractBtn">📊 Extract Trophy Data</button>
+    <button id="exportBtn" disabled>💾 Export to CSV</button>
+    <button id="clearBtn" disabled>🗑️ Clear Data</button>
+    
+    <div class="instructions">
+      <strong>Instructions:</strong><br>
+      1. Navigate to a TrueTrophies game page<br>
+      2. Click "Extract Trophy Data"<br>
+      3. Click "Export to CSV" to download<br>
+      <br>
+      <strong>Supported:</strong> TrueTrophies game trophy pages
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
