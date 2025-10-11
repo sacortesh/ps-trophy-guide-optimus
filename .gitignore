@@ -106,7 +106,5 @@ dist
 # specifics
 *.pdf
 *.txt
-index.html
 debug*
 *.csv
-*.md

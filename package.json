@@ -4,13 +4,21 @@
   "description": "Chrome extension for extracting PlayStation trophy data from TrueTrophies",
   "main": "extension/manifest.json",
   "scripts": {
-    "test": "echo \"Extension-based project - no tests specified\" && exit 0"
+    "test": "echo \"Extension-based project - no tests specified\" && exit 0",
+    "serve": "python -m http.server 8000",
+    "build": "echo \"No build process needed for static site\"",
+    "deploy": "./deploy.sh",
+    "deploy:manual": "git checkout gh-pages-release && git merge main --no-edit && git push origin gh-pages-release && git checkout main"
   },
   "author": "",
   "license": "ISC",
-  "keywords": ["chrome-extension", "playstation", "trophies", "truetrophies", "gaming"],
+  "keywords": ["chrome-extension", "playstation", "trophies", "truetrophies", "gaming", "github-pages"],
   "repository": {
     "type": "git",
-    "url": "."
+    "url": "https://github.com/sacortesh/ps-trophy-guide-optimus.git"
+  },
+  "homepage": "https://sacortesh.github.io/ps-trophy-guide-optimus/",
+  "bugs": {
+    "url": "https://github.com/sacortesh/ps-trophy-guide-optimus/issues"
   }
 }

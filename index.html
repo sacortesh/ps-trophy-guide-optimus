@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PS Trophy Guide Optimus - Chrome Extension</title>
+    <meta name="description" content="Extract PlayStation trophy data from TrueTrophies and export to CSV. Perfect for trophy hunters and guide creators.">
+    <meta name="keywords" content="playstation, trophies, truetrophies, chrome extension, csv export, gaming">
+    <meta name="author" content="PS Trophy Guide Optimus">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourusername.github.io/ps-trophy-guide-optimus/">
+    <meta property="og:title" content="PS Trophy Guide Optimus - Chrome Extension">
+    <meta property="og:description" content="Extract PlayStation trophy data from TrueTrophies and export to CSV. Perfect for trophy hunters and guide creators.">
+    <meta property="og:image" content="https://yourusername.github.io/ps-trophy-guide-optimus/assets/extension-preview.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://yourusername.github.io/ps-trophy-guide-optimus/">
+    <meta property="twitter:title" content="PS Trophy Guide Optimus - Chrome Extension">
+    <meta property="twitter:description" content="Extract PlayStation trophy data from TrueTrophies and export to CSV. Perfect for trophy hunters and guide creators.">
+    <meta property="twitter:image" content="https://yourusername.github.io/ps-trophy-guide-optimus/assets/extension-preview.png">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #FFD700;
+            color: #333;
+        }
+
+        .btn-primary:hover {
+            background: #FFC107;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        main {
+            background: white;
+            margin: 2rem 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .content-section {
+            padding: 3rem 2rem;
+        }
+
+        .content-section:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        /* Screenshots */
+        .screenshots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .screenshot {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot:hover {
+            transform: scale(1.05);
+        }
+
+        .screenshot img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Installation Steps */
+        .installation-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .step {
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: bold;
+        }
+
+        /* FAQ */
+        .faq-item {
+            background: white;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .faq-question {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1.1rem;
+            transition: background 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: #e9ecef;
+        }
+
+        .faq-answer {
+            padding: 1.5rem;
+            display: none;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .faq-answer.active {
+            display: block;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #FFD700;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .content-section {
+                padding: 2rem 1rem;
+            }
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin: 0.5rem;
+        }
+
+        .badge.new {
+            background: #FF9800;
+        }
+
+        .badge.popular {
+            background: #E91E63;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">🏆 PS Trophy Guide Optimus</a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#screenshots">Screenshots</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>PS Trophy Guide Optimus</h1>
+            <p>Extract PlayStation trophy data from TrueTrophies and export to CSV format</p>
+            <div class="cta-buttons">
+                <a href="https://chrome.google.com/webstore" class="btn btn-primary" target="_blank">
+                    📥 Install from Chrome Web Store
+                </a>
+                <a href="#installation" class="btn btn-secondary">
+                    📖 Installation Guide
+                </a>
+            </div>
+            <div style="margin-top: 1rem;">
+                <span class="badge new">New</span>
+                <span class="badge popular">Popular</span>
+                <span class="badge">Free</span>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <section id="features" class="content-section">
+            <h2>🚀 Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h4>Automatic Trophy Detection</h4>
+                    <p>Automatically detects and extracts trophy data from TrueTrophies game pages with one click.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h4>CSV Export</h4>
+                    <p>Export trophy data in CSV format compatible with your existing trophy tracking tools and spreadsheets.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h4>No Cloudflare Issues</h4>
+                    <p>Runs in your browser context, bypassing Cloudflare protection and rate limiting completely.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h4>Local Storage</h4>
+                    <p>Stores extracted data locally for multiple exports and offline access to your trophy data.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Easy to Use</h4>
+                    <p>Simple popup interface with intuitive controls. No technical knowledge required.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h4>Privacy Focused</h4>
+                    <p>All data processing happens locally in your browser. No data is sent to external servers.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="screenshots" class="content-section">
+            <h2>📸 Screenshots</h2>
+            <div class="screenshots">
+                <div class="screenshot">
+                    <img src="assets/extension-popup.png" alt="Extension popup interface" onerror="this.style.display='none'">
+                    <div style="padding: 2rem; text-align: center; background: #f8f9fa;">
+                        <h4>Extension Popup</h4>
+                        <p>Clean, intuitive interface for extracting trophy data</p>
+                    </div>
+                </div>
+                <div class="screenshot">
+                    <img src="assets/csv-export.png" alt="CSV export example" onerror="this.style.display='none'">
+                    <div style="padding: 2rem; text-align: center; background: #f8f9fa;">
+                        <h4>CSV Export</h4>
+                        <p>Structured data ready for analysis and tracking</p>
+                    </div>
+                </div>
+                <div class="screenshot">
+                    <img src="assets/truetrophies-page.png" alt="TrueTrophies page integration" onerror="this.style.display='none'">
+                    <div style="padding: 2rem; text-align: center; background: #f8f9fa;">
+                        <h4>TrueTrophies Integration</h4>
+                        <p>Works seamlessly with TrueTrophies game pages</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="installation" class="content-section">
+            <h2>📥 Installation Guide</h2>
+            <div class="installation-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Open Chrome Extensions</h4>
+                    <p>Navigate to <code>chrome://extensions/</code> in your Chrome browser</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Enable Developer Mode</h4>
+                    <p>Toggle the "Developer mode" switch in the top right corner</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Load Extension</h4>
+                    <p>Click "Load unpacked" and select the extension folder</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>Pin Extension</h4>
+                    <p>Pin the extension to your toolbar for easy access</p>
+                </div>
+            </div>
+            
+            <div style="background: #e3f2fd; padding: 2rem; border-radius: 10px; margin: 2rem 0;">
+                <h3>🎮 How to Use</h3>
+                <ol style="margin: 1rem 0; padding-left: 2rem;">
+                    <li><strong>Navigate</strong> to any TrueTrophies game trophy page</li>
+                    <li><strong>Click</strong> the extension icon in your toolbar</li>
+                    <li><strong>Extract</strong> trophy data with one click</li>
+                    <li><strong>Export</strong> to CSV format for your records</li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="faq" class="content-section">
+            <h2>❓ Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    What data does the extension extract?
+                </button>
+                <div class="faq-answer">
+                    <p>The extension extracts comprehensive trophy data including:</p>
+                    <ul>
+                        <li>Trophy title and description</li>
+                        <li>Trophy type (Bronze, Silver, Gold, Platinum)</li>
+                        <li>Sony rarity percentage</li>
+                        <li>PSNP rarity data</li>
+                        <li>Trophy tags (Missable, Collectable, etc.)</li>
+                        <li>Completion status</li>
+                        <li>Guide URLs and YouTube search queries</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    Is my data secure and private?
+                </button>
+                <div class="faq-answer">
+                    <p>Yes! All data processing happens locally in your browser. The extension:</p>
+                    <ul>
+                        <li>Does not send any data to external servers</li>
+                        <li>Only accesses TrueTrophies pages you visit</li>
+                        <li>Stores data locally in your browser</li>
+                        <li>Respects your privacy completely</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    Which pages are supported?
+                </button>
+                <div class="faq-answer">
+                    <p>The extension works on TrueTrophies game trophy pages with URLs like:</p>
+                    <code>https://www.truetrophies.com/game/[game-name]/trophies</code>
+                    <p>It automatically detects when you're on a supported page and enables the extraction features.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    What if the extraction fails?
+                </button>
+                <div class="faq-answer">
+                    <p>If extraction fails, try these troubleshooting steps:</p>
+                    <ul>
+                        <li>Refresh the TrueTrophies page and try again</li>
+                        <li>Make sure you're on a game's trophy page (not the main game page)</li>
+                        <li>Check that all trophies have loaded on the page</li>
+                        <li>Use the "Test Connection" button in the extension popup</li>
+                        <li>Check the browser console for detailed error messages</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    Can I use the CSV data with other tools?
+                </button>
+                <div class="faq-answer">
+                    <p>Absolutely! The exported CSV is compatible with:</p>
+                    <ul>
+                        <li>Microsoft Excel and Google Sheets</li>
+                        <li>Trophy tracking applications</li>
+                        <li>Data analysis tools</li>
+                        <li>Custom trophy management systems</li>
+                        <li>Backup and archival purposes</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    Is the extension free to use?
+                </button>
+                <div class="faq-answer">
+                    <p>Yes! The extension is completely free to use with no limitations. There are no:</p>
+                    <ul>
+                        <li>Usage limits or quotas</li>
+                        <li>Premium features behind paywalls</li>
+                        <li>Subscription requirements</li>
+                        <li>Hidden costs</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/yourusername/ps-trophy-guide-optimus" target="_blank">GitHub</a>
+                <a href="https://chrome.google.com/webstore" target="_blank">Chrome Web Store</a>
+                <a href="mailto:support@example.com">Support</a>
+                <a href="privacy.html">Privacy Policy</a>
+            </div>
+            <p>&copy; 2024 PS Trophy Guide Optimus. All rights reserved.</p>
+            <p style="margin-top: 0.5rem; opacity: 0.8;">
+                This extension is not affiliated with TrueTrophies or Sony Interactive Entertainment.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFAQ(button) {
+            const answer = button.nextElementSibling;
+            const isActive = answer.classList.contains('active');
+            
+            // Close all FAQ answers
+            document.querySelectorAll('.faq-answer').forEach(ans => {
+                ans.classList.remove('active');
+            });
+            
+            // Open clicked answer if it wasn't active
+            if (!isActive) {
+                answer.classList.add('active');
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to header
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.15)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.1)';
+            }
+        });
+    </script>
+</body>
+</html>
