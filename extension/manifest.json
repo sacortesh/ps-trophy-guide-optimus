@@ -18,7 +18,7 @@
   "content_scripts": [
     {
       "matches": ["https://www.truetrophies.com/game/*/trophies*"],
-      "js": ["content.js"],
+      "js": ["tags-dictionary.js", "content.js"],
       "run_at": "document_end"
     }
   ],
