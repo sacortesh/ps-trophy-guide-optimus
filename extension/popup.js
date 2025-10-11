@@ -1,4 +1,6 @@
 // Debug popup script with connection testing
+const DISABLE_ADVERTISEMENTS = true; // Set to true to disable all advertisements
+
 document.addEventListener('DOMContentLoaded', function() {
   const extractBtn = document.getElementById('extractBtn');
   const exportBtn = document.getElementById('exportBtn');
@@ -81,9 +83,11 @@ document.addEventListener('DOMContentLoaded', function() {
           trophyCount.textContent = response.trophyCount;
           gameInfo.style.display = 'block';
           
-          // Generate and show affiliate links
-          generateAffiliateLinks(response.gameTitle || 'Unknown Game');
-          affiliateSection.style.display = 'block';
+          // Generate and show affiliate links (if advertisements are enabled)
+          if (!DISABLE_ADVERTISEMENTS) {
+            generateAffiliateLinks(response.gameTitle || 'Unknown Game');
+            affiliateSection.style.display = 'block';
+          }
           
           // Enable export button
           exportBtn.disabled = false;
