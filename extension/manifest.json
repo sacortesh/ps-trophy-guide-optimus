@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "TrueTrophies Data Extractor",
+  "version": "1.0",
+  "description": "Extract trophy data from TrueTrophies pages and export to CSV",
+  "permissions": [
+    "activeTab",
+    "downloads",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.truetrophies.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Extract Trophy Data"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.truetrophies.com/game/*/trophies*"],
+      "js": ["tags-dictionary.js", "content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

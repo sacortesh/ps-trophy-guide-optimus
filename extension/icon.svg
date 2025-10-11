@@ -1,0 +1,27 @@
+<!-- Simple SVG icon for the Chrome extension -->
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#4CAF50" stroke="#2E7D32" stroke-width="4"/>
+  
+  <!-- Trophy cup -->
+  <path d="M45 85 L45 65 L35 65 L35 55 L45 55 L45 45 L55 45 L55 55 L65 55 L65 45 L75 45 L75 55 L85 55 L85 65 L75 65 L75 85 L65 85 L65 75 L55 75 L55 85 Z" fill="#FFD700" stroke="#FFA000" stroke-width="2"/>
+  
+  <!-- Trophy base -->
+  <rect x="50" y="85" width="28" height="8" fill="#FFD700" stroke="#FFA000" stroke-width="2"/>
+  
+  <!-- Trophy handle -->
+  <path d="M85 55 Q95 55 95 65 Q95 75 85 75" fill="none" stroke="#FFD700" stroke-width="3"/>
+  
+  <!-- Data lines -->
+  <line x1="25" y1="25" x2="35" y2="25" stroke="#2196F3" stroke-width="2"/>
+  <line x1="25" y1="30" x2="40" y2="30" stroke="#2196F3" stroke-width="2"/>
+  <line x1="25" y1="35" x2="30" y2="35" stroke="#2196F3" stroke-width="2"/>
+  
+  <line x1="88" y1="25" x2="98" y2="25" stroke="#2196F3" stroke-width="2"/>
+  <line x1="88" y1="30" x2="103" y2="30" stroke="#2196F3" stroke-width="2"/>
+  <line x1="88" y1="35" x2="93" y2="35" stroke="#2196F3" stroke-width="2"/>
+  
+  <!-- CSV icon -->
+  <rect x="20" y="90" width="20" height="15" fill="#E3F2FD" stroke="#2196F3" stroke-width="1"/>
+  <text x="30" y="100" text-anchor="middle" font-family="monospace" font-size="8" fill="#1976D2">CSV</text>
+</svg>
