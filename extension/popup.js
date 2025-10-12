@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const affiliateGame = document.getElementById('affiliateGame');
   const affiliateAccessories = document.getElementById('affiliateAccessories');
   const affiliateMerch = document.getElementById('affiliateMerch');
-  const affiliateCollectibles = document.getElementById('affiliateCollectibles');
+  const affiliateGuides = document.getElementById('affiliateGuides');
 
   // Feature suggestion elements
   const kofiButton = document.getElementById('kofiButton');
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
             status.className = 'status error';
             extractBtn.disabled = true;
           } else if (response && response.status === 'pong') {
-            status.textContent = '✅ Connected! Ready to extract from: ' + response.url;
+            status.textContent = '✅ Connected! Ready to extract for: ' + globalGameName;
             status.className = 'status success';
             extractBtn.disabled = false;
           } else {
@@ -290,17 +290,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const affiliateId = 'trophygui-20';
 
     const affiliateLinks = {
-      game: `https://amazon.com/s?k=${searchQuery}+PS4+PS5+game&tag=${affiliateId}`,
-      accessories: `https://amazon.com/s?k=${searchQuery}+controller+headset+gaming&tag=${affiliateId}`,
-      merch: `https://amazon.com/s?k=${searchQuery}+shirt+hoodie+merchandise&tag=${affiliateId}`,
-      collectibles: `https://amazon.com/s?k=${searchQuery}+collector+edition+figure&tag=${affiliateId}`
+      game: `https://amazon.com/s?k=${searchQuery}+PS+game&tag=${affiliateId}`,
+      accessories: `https://amazon.com/s?k=${searchQuery}+figure&tag=${affiliateId}`,
+      merch: `https://amazon.com/s?k=${searchQuery}+shirt+hoodie&tag=${affiliateId}`,
+      guides: `https://amazon.com/s?k=${searchQuery}+guide&tag=${affiliateId}`
     };
 
     affiliateGameTitle.textContent = gameTitle;
     affiliateGame.href = affiliateLinks.game;
     affiliateAccessories.href = affiliateLinks.accessories;
     affiliateMerch.href = affiliateLinks.merch;
-    affiliateCollectibles.href = affiliateLinks.collectibles;
+    affiliateGuides.href = affiliateLinks.guides;
   }
 
   // Check if user has clicked donation button
