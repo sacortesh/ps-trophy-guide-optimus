@@ -72,8 +72,6 @@ Consider protecting the `gh-pages-release` branch:
 ```bash
 # Serve site locally
 npm run serve
-# or
-python -m http.server 8000
 
 # Test deployment script
 ./deploy.sh

@@ -5,7 +5,7 @@ This repository contains a Chrome extension for extracting PlayStation trophy da
 ## 🚀 Quick Start
 
 ### For Users
-1. Visit the [GitHub Pages site](https://yourusername.github.io/ps-trophy-guide-optimus/)
+1. Visit the [GitHub Pages site](https://sacortesh.github.io/ps-trophy-guide-optimus/)
 2. Follow the installation guide
 3. Install the extension from Chrome Web Store (when published)
 
@@ -48,7 +48,7 @@ ps-trophy-guide-optimus/
 ### 2. Configure Custom Domain (Optional)
 
 1. In the Pages settings, add your custom domain
-2. Update the `index.html` file to replace `yourusername.github.io` with your domain
+2. Update the `index.html` file to replace `sacortesh.github.io` with your domain
 3. Update meta tags and links accordingly
 
 ### 3. Update Repository Information
@@ -57,15 +57,15 @@ Before publishing, update these placeholders in `index.html`:
 
 ```html
 <!-- Replace these URLs -->
-<meta property="og:url" content="https://yourusername.github.io/ps-trophy-guide-optimus/">
-<meta property="twitter:url" content="https://yourusername.github.io/ps-trophy-guide-optimus/">
+<meta property="og:url" content="https://sacortesh.github.io/ps-trophy-guide-optimus/">
+<meta property="twitter:url" content="https://sacortesh.github.io/ps-trophy-guide-optimus/">
 
 <!-- Replace these image URLs -->
-<meta property="og:image" content="https://yourusername.github.io/ps-trophy-guide-optimus/assets/extension-preview.png">
-<meta property="twitter:image" content="https://yourusername.github.io/ps-trophy-guide-optimus/assets/extension-preview.png">
+<meta property="og:image" content="https://sacortesh.github.io/ps-trophy-guide-optimus/assets/extension-preview.png">
+<meta property="twitter:image" content="https://sacortesh.github.io/ps-trophy-guide-optimus/assets/extension-preview.png">
 
 <!-- Replace GitHub links -->
-<a href="https://github.com/yourusername/ps-trophy-guide-optimus" target="_blank">GitHub</a>
+<a href="https://github.com/sacortesh/ps-trophy-guide-optimus" target="_blank">GitHub</a>
 
 <!-- Replace Chrome Web Store link -->
 <a href="https://chrome.google.com/webstore" class="btn btn-primary" target="_blank">
@@ -174,11 +174,7 @@ If you need to test locally:
 
 1. Serve the files using a local server:
    ```bash
-   # Using Python
-   python -m http.server 8000
-   
-   # Using Node.js
-   npx serve .
+   npm run serve
    ```
 
 2. Visit `http://localhost:8000` to preview
@@ -232,4 +228,4 @@ When updating the extension:
 
 ---
 
-**Note:** Replace all placeholder URLs (`yourusername.github.io`) with your actual GitHub Pages URL before publishing.
+**Note:** Replace all placeholder URLs (`sacortesh.github.io`) with your actual GitHub Pages URL before publishing.

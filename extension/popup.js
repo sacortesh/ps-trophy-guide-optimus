@@ -1,11 +1,16 @@
 // Debug popup script with connection testing
-const DISABLE_ADVERTISEMENTS = true; // Set to true to disable all advertisements
+const DISABLE_ADVERTISEMENTS = false; // Set to true to disable all advertisements
+
+// Global variable to store game name
+let globalGameName = null;
 
 document.addEventListener('DOMContentLoaded', function() {
   const extractBtn = document.getElementById('extractBtn');
   const exportBtn = document.getElementById('exportBtn');
   const clearBtn = document.getElementById('clearBtn');
   const status = document.getElementById('status');
+  const detectedGame = document.getElementById('detectedGame');
+  const detectedGameName = document.getElementById('detectedGameName');
   const gameInfo = document.getElementById('gameInfo');
   const gameTitle = document.getElementById('gameTitle');
   const trophyCount = document.getElementById('trophyCount');
@@ -18,8 +23,63 @@ document.addEventListener('DOMContentLoaded', function() {
   const affiliateMerch = document.getElementById('affiliateMerch');
   const affiliateCollectibles = document.getElementById('affiliateCollectibles');
 
+  // Call method when popup opens
+  onPopupOpened();
+
   // Test connection first
   testConnection();
+
+  function onPopupOpened() {
+    console.log('🚀 Popup opened - initializing...');
+    
+    // Extract game name from URL
+    extractGameNameFromUrl();
+    
+    console.log('📊 Popup opened at:', new Date().toISOString());
+    
+    console.log('✅ Popup initialization complete');
+  }
+
+  function extractGameNameFromUrl() {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      const currentTab = tabs[0];
+      console.log('🔍 Extracting game name from URL:', currentTab.url);
+      
+      if (currentTab.url.includes('truetrophies.com/game/') && currentTab.url.includes('/trophies')) {
+        // Extract game name from URL structure: truetrophies.com/game/[game-name]/trophies
+        const urlMatch = currentTab.url.match(/truetrophies\.com\/game\/([^\/]+)\/trophies/);
+        if (urlMatch && urlMatch[1]) {
+          globalGameName = decodeURIComponent(urlMatch[1].replace(/-/g, ' '));
+          console.log('🎮 Game name extracted:', globalGameName);
+          
+          // Display detected game immediately
+          detectedGameName.textContent = globalGameName;
+          detectedGame.style.display = 'block';
+          
+          // Generate affiliate links immediately if advertisements are enabled
+          if (!DISABLE_ADVERTISEMENTS) {
+            generateAffiliateLinks(globalGameName);
+            affiliateSection.style.display = 'block';
+          }
+        } else {
+          globalGameName = 'Unknown Game';
+          console.log('⚠️ Could not extract game name from URL');
+          detectedGameName.textContent = globalGameName;
+          detectedGame.style.display = 'block';
+        }
+      } else {
+        globalGameName = null;
+        console.log('⚠️ Not on a TrueTrophies game page');
+        detectedGame.style.display = 'none';
+        affiliateSection.style.display = 'none';
+      }
+    });
+  }
+
+  // Helper function to get the global game name
+  function getGlobalGameName() {
+    return globalGameName;
+  }
 
   function testConnection() {
     status.textContent = '🔄 Testing connection...';
@@ -95,8 +155,8 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // Store data for export
           chrome.storage.local.set({
-            trophyData: response.trophies,
-            gameTitle: response.gameTitle,
+            trophyData: response,
+            gameTitle: response.title,
             gameUrl: response.gameUrl
           });
         } else {
@@ -118,8 +178,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
 
-      const csv = generateCSV(data.trophyData, data.gameTitle);
-      const filename = sanitizeFilename(data.gameTitle || 'trophies') + '.csv';
+      const csv = generateCSV(data.trophyData, data.trophyData.title);
+      const filename = sanitizeFilename(data.trophyData.title || 'trophies') + '.csv';
       
       // Download the CSV file
       chrome.downloads.download({
@@ -144,6 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
       status.textContent = '🗑️ Data cleared';
       status.className = 'status info';
       gameInfo.style.display = 'none';
+      detectedGame.style.display = 'none';
       affiliateSection.style.display = 'none';
       exportBtn.disabled = true;
       clearBtn.disabled = true;
@@ -151,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Generate CSV content using your original format
-  function generateCSV(trophies, gameTitle) {
+  function generateCSV(trophyData, gameTitle) {
     // Use the same headers as your original TrueTrophies assembler
     const headers = [
       'Trophy Set',
@@ -166,16 +227,41 @@ document.addEventListener('DOMContentLoaded', function() {
       'YouTube Query'
     ];
 
-    // Sort trophies by trophy score (descending) like your original script
-    trophies.sort((a, b) => b.trophyScore - a.trophyScore);
+    const csvRows = [headers.join(';')];
+    const allTrophies = [];
 
-    const csvRows = [headers.join(',')];
+    // Process base game trophies
+    if (trophyData.base && trophyData.base.length > 0) {
+      trophyData.base.forEach(trophy => {
+        allTrophies.push({
+          ...trophy,
+          trophySet: gameTitle || 'Base Game'
+        });
+      });
+    }
 
-    trophies.forEach(trophy => {
-      const tagsDescription = trophy.tags.map(tag => tag.name).join('- ');
+    // Process DLC trophies
+    if (trophyData.dlcs && trophyData.dlcs.length > 0) {
+      trophyData.dlcs.forEach(dlc => {
+        if (dlc.trophies && dlc.trophies.length > 0) {
+          dlc.trophies.forEach(trophy => {
+            allTrophies.push({
+              ...trophy,
+              trophySet: dlc.title || 'Unknown DLC'
+            });
+          });
+        }
+      });
+    }
+
+    // Sort all trophies by trophy score (descending) like your original script
+    allTrophies.sort((a, b) => b.trophyScore - a.trophyScore);
+
+    allTrophies.forEach(trophy => {
+      const tagsDescription = trophy.tags.map(tag => tag.name).join(', ');
       
       const row = [
-        escapeCSV(gameTitle || ''),
+        escapeCSV(trophy.trophySet || ''),
         escapeCSV(trophy.title || ''),
         escapeCSV(trophy.description || ''),
         escapeCSV(trophy.sonyRarityValue || ''),
@@ -186,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
         escapeCSV(trophy.guideUrl || ''),
         escapeCSV(trophy.youtubeQuery || '')
       ];
-      csvRows.push(row.join(','));
+      csvRows.push(row.join(';'));
     });
 
     return csvRows.join('\n');

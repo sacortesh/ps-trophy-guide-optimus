@@ -31,8 +31,8 @@ Your PS Trophy Guide Optimus extension now has a complete GitHub Pages setup rea
 
 ### 2. Update Placeholder URLs
 Before publishing, replace these placeholders in `index.html`:
-- `yourusername.github.io` → Your actual GitHub username
-- `yourusername/ps-trophy-guide-optimus` → Your actual repository path
+- `sacortesh.github.io` → Your actual GitHub username
+- `sacortesh/ps-trophy-guide-optimus` → Your actual repository path
 - `privacy@example.com` → Your actual contact email
 - `https://chrome.google.com/webstore` → Your actual Chrome Web Store URL
 
@@ -47,8 +47,6 @@ Create and add these images to the `assets/` directory:
 ```bash
 # Serve the site locally
 npm run serve
-# or
-python -m http.server 8000
 ```
 
 ### 5. Deploy

@@ -5,7 +5,7 @@
   "main": "extension/manifest.json",
   "scripts": {
     "test": "echo \"Extension-based project - no tests specified\" && exit 0",
-    "serve": "python -m http.server 8000",
+    "serve": "npx serve -s . -l 8000",
     "build": "echo \"No build process needed for static site\"",
     "deploy": "./deploy.sh",
     "deploy:manual": "git checkout gh-pages-release && git merge main --no-edit && git push origin gh-pages-release && git checkout main"

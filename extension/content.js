@@ -271,9 +271,8 @@ function calculateTrophyScore(trophy) {
 function completeMissingQueries(gameTitle, trophiesData) {
   trophiesData.forEach((element) => {
     if (!element.youtubeQuery) {
-      let youtubeQuery = "https://www.youtube.com/results?search_query=" + 
-                        gameTitle + " " + element.title + " trophy guide";
-      youtubeQuery = youtubeQuery.replace(/\s/g, "+");
+      const searchQuery = `${gameTitle} ${element.title} trophy guide`;
+      const youtubeQuery = "https://www.youtube.com/results?search_query=" + encodeURIComponent(searchQuery);
       element.youtubeQuery = youtubeQuery;
     }
   });

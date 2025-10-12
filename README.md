@@ -4,7 +4,7 @@ A Chrome extension that extracts PlayStation trophy data from TrueTrophies pages
 
 ## 🌐 Live Demo
 
-Visit our GitHub Pages site: **[https://yourusername.github.io/ps-trophy-guide-optimus/](https://yourusername.github.io/ps-trophy-guide-optimus/)**
+Visit our GitHub Pages site: **[https://sacortesh.github.io/ps-trophy-guide-optimus/](https://sacortesh.github.io/ps-trophy-guide-optimus/)**
 
 ## 🚀 Features
 
@@ -86,7 +86,7 @@ See [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) for detailed setup instructio
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/ps-trophy-guide-optimus.git
+   git clone https://github.com/sacortesh/ps-trophy-guide-optimus.git
    cd ps-trophy-guide-optimus
    ```
 
@@ -146,8 +146,8 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **GitHub Issues**: [Create an issue](https://github.com/yourusername/ps-trophy-guide-optimus/issues)
-- **Documentation**: [GitHub Pages site](https://yourusername.github.io/ps-trophy-guide-optimus/)
+- **GitHub Issues**: [Create an issue](https://github.com/sacortesh/ps-trophy-guide-optimus/issues)
+- **Documentation**: [GitHub Pages site](https://sacortesh.github.io/ps-trophy-guide-optimus/)
 - **FAQ**: Check the FAQ section on the landing page
 
 ## 🗺️ Roadmap
