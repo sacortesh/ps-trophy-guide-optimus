@@ -1,5 +1,4 @@
-// Debug popup script with connection testing
-const DISABLE_ADVERTISEMENTS = false; // Set to true to disable all advertisements
+const DISABLE_ADVERTISEMENTS = false;
 
 // Global variable to store game name
 let globalGameName = null;
@@ -14,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const gameInfo = document.getElementById('gameInfo');
   const gameTitle = document.getElementById('gameTitle');
   const trophyCount = document.getElementById('trophyCount');
-  
+
   // Affiliate section elements
   const affiliateSection = document.getElementById('affiliateSection');
   const affiliateGameTitle = document.getElementById('affiliateGameTitle');
@@ -23,53 +22,53 @@ document.addEventListener('DOMContentLoaded', function() {
   const affiliateMerch = document.getElementById('affiliateMerch');
   const affiliateCollectibles = document.getElementById('affiliateCollectibles');
 
+  // Feature suggestion elements
+  const kofiButton = document.getElementById('kofiButton');
+  const featureSuggestionSection = document.getElementById('featureSuggestionSection');
+  const suggestFeatureBtn = document.getElementById('suggestFeatureBtn');
+
   // Call method when popup opens
   onPopupOpened();
 
   // Test connection first
   testConnection();
 
+  // Check if user has clicked donation button
+  checkDonationButtonClick();
+
+  // Set up donation button click tracking
+  setupDonationTracking();
+
+  // Set up feature suggestion functionality
+  setupFeatureSuggestion();
+
   function onPopupOpened() {
-    console.log('🚀 Popup opened - initializing...');
-    
-    // Extract game name from URL
     extractGameNameFromUrl();
-    
-    console.log('📊 Popup opened at:', new Date().toISOString());
-    
-    console.log('✅ Popup initialization complete');
   }
 
   function extractGameNameFromUrl() {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       const currentTab = tabs[0];
-      console.log('🔍 Extracting game name from URL:', currentTab.url);
-      
+
       if (currentTab.url.includes('truetrophies.com/game/') && currentTab.url.includes('/trophies')) {
-        // Extract game name from URL structure: truetrophies.com/game/[game-name]/trophies
         const urlMatch = currentTab.url.match(/truetrophies\.com\/game\/([^\/]+)\/trophies/);
         if (urlMatch && urlMatch[1]) {
           globalGameName = decodeURIComponent(urlMatch[1].replace(/-/g, ' '));
-          console.log('🎮 Game name extracted:', globalGameName);
-          
-          // Display detected game immediately
+
           detectedGameName.textContent = globalGameName;
           detectedGame.style.display = 'block';
-          
-          // Generate affiliate links immediately if advertisements are enabled
+
           if (!DISABLE_ADVERTISEMENTS) {
             generateAffiliateLinks(globalGameName);
             affiliateSection.style.display = 'block';
           }
         } else {
           globalGameName = 'Unknown Game';
-          console.log('⚠️ Could not extract game name from URL');
           detectedGameName.textContent = globalGameName;
           detectedGame.style.display = 'block';
         }
       } else {
         globalGameName = null;
-        console.log('⚠️ Not on a TrueTrophies game page');
         detectedGame.style.display = 'none';
         affiliateSection.style.display = 'none';
       }
@@ -85,20 +84,16 @@ document.addEventListener('DOMContentLoaded', function() {
     status.textContent = '🔄 Testing connection...';
     status.className = 'status info';
 
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       const currentTab = tabs[0];
-      console.log('Current tab:', currentTab.url);
-      
+
       if (currentTab.url.includes('truetrophies.com/game/') && currentTab.url.includes('/trophies')) {
-        // Send ping to test connection
-        chrome.tabs.sendMessage(tabs[0].id, {action: 'ping'}, function(response) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'ping' }, function(response) {
           if (chrome.runtime.lastError) {
-            console.error('Connection error:', chrome.runtime.lastError);
             status.textContent = '❌ Connection failed: ' + chrome.runtime.lastError.message;
             status.className = 'status error';
             extractBtn.disabled = true;
           } else if (response && response.status === 'pong') {
-            console.log('Connection successful:', response);
             status.textContent = '✅ Connected! Ready to extract from: ' + response.url;
             status.className = 'status success';
             extractBtn.disabled = false;
@@ -122,37 +117,34 @@ document.addEventListener('DOMContentLoaded', function() {
     status.className = 'status info';
     extractBtn.disabled = true;
 
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {action: 'extractTrophies'}, function(response) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, { action: 'extractTrophies' }, function(response) {
         if (chrome.runtime.lastError) {
-          console.error('Extraction error:', chrome.runtime.lastError);
           status.textContent = '❌ Error: ' + chrome.runtime.lastError.message;
           status.className = 'status error';
           extractBtn.disabled = false;
           return;
         }
 
-        console.log('Extraction response:', response);
-
         if (response && response.success) {
           status.textContent = `✅ Extracted ${response.trophyCount} trophies`;
           status.className = 'status success';
-          
+
           // Show game info
           gameTitle.textContent = response.gameTitle || 'Unknown Game';
           trophyCount.textContent = response.trophyCount;
           gameInfo.style.display = 'block';
-          
+
           // Generate and show affiliate links (if advertisements are enabled)
           if (!DISABLE_ADVERTISEMENTS) {
             generateAffiliateLinks(response.gameTitle || 'Unknown Game');
             affiliateSection.style.display = 'block';
           }
-          
+
           // Enable export button
           exportBtn.disabled = false;
           clearBtn.disabled = false;
-          
+
           // Store data for export
           chrome.storage.local.set({
             trophyData: response,
@@ -163,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
           status.textContent = '❌ Failed to extract trophy data: ' + (response?.error || 'Unknown error');
           status.className = 'status error';
         }
-        
+
         extractBtn.disabled = false;
       });
     });
@@ -180,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const csv = generateCSV(data.trophyData, data.trophyData.title);
       const filename = sanitizeFilename(data.trophyData.title || 'trophies') + '.csv';
-      
+
       // Download the CSV file
       chrome.downloads.download({
         url: 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv),
@@ -259,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     allTrophies.forEach(trophy => {
       const tagsDescription = trophy.tags.map(tag => tag.name).join(', ');
-      
+
       const row = [
         escapeCSV(trophy.trophySet || ''),
         escapeCSV(trophy.title || ''),
@@ -293,30 +285,72 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Generate dynamic affiliate links based on game title
   function generateAffiliateLinks(gameTitle) {
-    console.log('🛒 Generating affiliate links for:', gameTitle);
-    
-    // Clean the game title for search queries
     const cleanTitle = gameTitle.replace(/[^\w\s]/g, '').trim();
     const searchQuery = encodeURIComponent(cleanTitle);
-    
-    // Your Amazon Associates affiliate ID (replace with your actual ID)
-    const affiliateId = 'trophygui-20'; // Replace with your Amazon Associates ID
-    
-    // Generate different types of affiliate links
+    const affiliateId = 'trophygui-20';
+
     const affiliateLinks = {
       game: `https://amazon.com/s?k=${searchQuery}+PS4+PS5+game&tag=${affiliateId}`,
       accessories: `https://amazon.com/s?k=${searchQuery}+controller+headset+gaming&tag=${affiliateId}`,
       merch: `https://amazon.com/s?k=${searchQuery}+shirt+hoodie+merchandise&tag=${affiliateId}`,
       collectibles: `https://amazon.com/s?k=${searchQuery}+collector+edition+figure&tag=${affiliateId}`
     };
-    
-    // Update the affiliate section
+
     affiliateGameTitle.textContent = gameTitle;
     affiliateGame.href = affiliateLinks.game;
     affiliateAccessories.href = affiliateLinks.accessories;
     affiliateMerch.href = affiliateLinks.merch;
     affiliateCollectibles.href = affiliateLinks.collectibles;
-    
-    console.log('✅ Affiliate links generated:', affiliateLinks);
+  }
+
+  // Check if user has clicked donation button
+  function checkDonationButtonClick() {
+    chrome.storage.local.get(['donationButtonClicked'], function(result) {
+      if (result.donationButtonClicked) {
+        featureSuggestionSection.style.display = 'block';
+      }
+    });
+  }
+
+  // Set up donation button click tracking
+  function setupDonationTracking() {
+    kofiButton.addEventListener('click', function() {
+      chrome.storage.local.set({
+        donationButtonClicked: true,
+        donationButtonClickDate: new Date().toISOString()
+      }, function() {
+        featureSuggestionSection.style.display = 'block';
+
+        const originalText = kofiButton.textContent;
+        kofiButton.textContent = '✅ Thank you!';
+        kofiButton.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+
+        setTimeout(() => {
+          kofiButton.textContent = originalText;
+          kofiButton.style.background = 'linear-gradient(45deg, #29ABE0, #1E88E5)';
+        }, 2000);
+      });
+    });
+  }
+
+  // Set up feature suggestion functionality
+  function setupFeatureSuggestion() {
+    suggestFeatureBtn.addEventListener('click', function() {
+      const githubIssuesUrl = 'https://github.com/sacortesh/ps-trophy-guide-optimus/issues/new?template=feature_request.md&title=Feature%20Request:%20';
+
+      chrome.tabs.create({
+        url: githubIssuesUrl,
+        active: true
+      });
+
+      const originalText = suggestFeatureBtn.textContent;
+      suggestFeatureBtn.textContent = '🚀 Opening GitHub...';
+      suggestFeatureBtn.disabled = true;
+
+      setTimeout(() => {
+        suggestFeatureBtn.textContent = originalText;
+        suggestFeatureBtn.disabled = false;
+      }, 2000);
+    });
   }
 });

@@ -2,13 +2,17 @@
   "name": "ps-trophy-guide-optimus",
   "version": "1.0.0",
   "description": "Chrome extension for extracting PlayStation trophy data from TrueTrophies",
+  "type": "module",
   "main": "extension/manifest.json",
   "scripts": {
     "test": "echo \"Extension-based project - no tests specified\" && exit 0",
     "serve": "npx serve -s . -l 8000",
     "build": "echo \"No build process needed for static site\"",
     "deploy": "./deploy.sh",
-    "deploy:manual": "git checkout gh-pages-release && git merge main --no-edit && git push origin gh-pages-release && git checkout main"
+    "deploy:manual": "git checkout gh-pages-release && git merge main --no-edit && git push origin gh-pages-release && git checkout main",
+    "lint": "eslint extension/*.js --fix",
+    "lint:check": "eslint extension/*.js",
+    "lint:fix": "eslint extension/*.js --fix"
   },
   "author": "",
   "license": "ISC",
@@ -20,5 +24,8 @@
   "homepage": "https://sacortesh.github.io/ps-trophy-guide-optimus/",
   "bugs": {
     "url": "https://github.com/sacortesh/ps-trophy-guide-optimus/issues"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0"
   }
 }
