@@ -109,3 +109,4 @@ dist
 *.txt
 debug*
 *.csv
+output/
