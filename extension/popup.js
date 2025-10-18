@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const extractBtn = document.getElementById('extractBtn');
   const exportBtn = document.getElementById('exportBtn');
   const clearBtn = document.getElementById('clearBtn');
+  const hltbBtn = document.getElementById('hltbBtn');
   const status = document.getElementById('status');
   const detectedGame = document.getElementById('detectedGame');
   const detectedGameName = document.getElementById('detectedGameName');
@@ -16,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Affiliate section elements
   const affiliateSection = document.getElementById('affiliateSection');
-  const affiliateGameTitle = document.getElementById('affiliateGameTitle');
   const affiliateGame = document.getElementById('affiliateGame');
   const affiliateAccessories = document.getElementById('affiliateAccessories');
   const affiliateMerch = document.getElementById('affiliateMerch');
@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
           detectedGameName.textContent = globalGameName;
           detectedGame.style.display = 'block';
+          hltbBtn.disabled = false;
 
           if (!DISABLE_ADVERTISEMENTS) {
             generateAffiliateLinks(globalGameName);
@@ -66,11 +67,13 @@ document.addEventListener('DOMContentLoaded', function() {
           globalGameName = 'Unknown Game';
           detectedGameName.textContent = globalGameName;
           detectedGame.style.display = 'block';
+          hltbBtn.disabled = false;
         }
       } else {
         globalGameName = null;
         detectedGame.style.display = 'none';
         affiliateSection.style.display = 'none';
+        hltbBtn.disabled = true;
       }
     });
   }
@@ -144,6 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
           // Enable export button
           exportBtn.disabled = false;
           clearBtn.disabled = false;
+          hltbBtn.disabled = false;
 
           // Store data for export
           chrome.storage.local.set({
@@ -200,7 +204,28 @@ document.addEventListener('DOMContentLoaded', function() {
       affiliateSection.style.display = 'none';
       exportBtn.disabled = true;
       clearBtn.disabled = true;
+      hltbBtn.disabled = true;
     });
+  });
+
+  // How Long to Beat button
+  hltbBtn.addEventListener('click', function() {
+    if (!globalGameName) {
+      status.textContent = '❌ No game detected';
+      status.className = 'status error';
+      return;
+    }
+
+    const cleanTitle = globalGameName.replace(/[^\w\s]/g, '').trim();
+    const hltbUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(cleanTitle)}`;
+    
+    chrome.tabs.create({
+      url: hltbUrl,
+      active: true
+    });
+
+    status.textContent = '⏱️ Opening HowLongToBeat...';
+    status.className = 'status info';
   });
 
   // Generate CSV content using your original format
@@ -287,16 +312,15 @@ document.addEventListener('DOMContentLoaded', function() {
   function generateAffiliateLinks(gameTitle) {
     const cleanTitle = gameTitle.replace(/[^\w\s]/g, '').trim();
     const searchQuery = encodeURIComponent(cleanTitle);
-    const affiliateId = 'trophygui-20';
+    const affiliateId = 'sacortes-20';
 
     const affiliateLinks = {
-      game: `https://amazon.com/s?k=${searchQuery}+PS+game&tag=${affiliateId}`,
+      game: `https://amazon.com/s?k=${searchQuery}&tag=${affiliateId}`,
       accessories: `https://amazon.com/s?k=${searchQuery}+figure&tag=${affiliateId}`,
       merch: `https://amazon.com/s?k=${searchQuery}+shirt+hoodie&tag=${affiliateId}`,
       guides: `https://amazon.com/s?k=${searchQuery}+guide&tag=${affiliateId}`
     };
 
-    affiliateGameTitle.textContent = gameTitle;
     affiliateGame.href = affiliateLinks.game;
     affiliateAccessories.href = affiliateLinks.accessories;
     affiliateMerch.href = affiliateLinks.merch;

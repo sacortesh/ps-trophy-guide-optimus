@@ -245,11 +245,14 @@
     }
     
     .affiliate-disclosure {
-      font-size: 9px;
-      opacity: 0.7;
+      font-size: 12px;
       text-align: center;
       margin-top: 8px;
-      font-style: italic;
+      color: #eee;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
   </style>
 </head>
@@ -278,6 +281,7 @@
     <button id="extractBtn">📊 Extract Trophy Data</button>
     <button id="exportBtn" disabled>💾 Export to CSV</button>
     <button id="clearBtn" disabled>🗑️ Clear Data</button>
+    <button id="hltbBtn" disabled>⏱️ How Long to Beat</button>
     <button id="testBtn">🔧 Test Connection</button>
     
     <div class="donation-section">
@@ -301,7 +305,7 @@
     </div>
     
     <div id="affiliateSection" class="affiliate-section" style="display: none;">
-      <div class="affiliate-title">🛒 Shop for <span id="affiliateGameTitle">This Game</span></div>
+      <div class="affiliate-title">Advertisement – Affiliate Links</div>
       <div class="ad-label">Advertisement</div>
       <div class="affiliate-grid">
         <div class="affiliate-item">
@@ -318,7 +322,7 @@
         </div>
       </div>
       <div class="affiliate-disclosure">
-        * Affiliate links - we earn commission on purchases
+        🛈 This section contains affiliate links — we may earn a small commission if you purchase through them.
       </div>
     </div>
     
