@@ -189,7 +189,7 @@ const TT_TAGS_DICTIONNARY = [
     order: 31,
     description: 'require you to obtain all other trophies within the base game.',
     name: 'Platinum',
-    priority: 5000
+    priority: 20000
   },
   {
     order: 10,

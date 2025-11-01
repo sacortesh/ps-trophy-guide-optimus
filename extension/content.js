@@ -253,37 +253,36 @@ function getTagsFromClass(tagClass) {
 }
 
 function calculateTrophyScore(trophy) {
-  let score = parseInt(trophy.sonyRarityValue) || 0;
-
-  for (let i = 0; i < trophy.tags.length; i++) {
-    const element = trophy.tags[i];
-    if (element.name == 'Main Storyline' || element.name == 'Story Completed') {
-      score = parseInt(trophy.sonyRarityValue) + 200;
-      break;
-    } else {
-      score += parseInt(element.priority) + 1000;
-    }
+  const baseRarity = parseInt(trophy.sonyRarityValue) || 0;
+  const STORY_TAGS = ['Main Storyline', 'Story Completed'];
+  
+  const hasStoryTag = trophy.tags.some(tag => 
+    STORY_TAGS.includes(tag.name)
+  );
+  
+  if (hasStoryTag) {
+    trophy.trophyScore = baseRarity + 200;
+    return;
   }
-
-  trophy.trophyScore = score;
+  
+  const tagScore = trophy.tags.reduce((sum, tag) => {
+    return sum + (parseInt(tag.priority) || 0) + 1000;
+  }, 0);
+  
+  trophy.trophyScore = baseRarity + tagScore;
 }
 
 function completeMissingQueries(gameTitle, trophiesData) {
   trophiesData.forEach((element) => {
+    const searchQuery = `${gameTitle} ${element.title} trophy guide`;
     if (!element.youtubeQuery) {
-      const searchQuery = `${gameTitle} ${element.title} trophy guide`;
       const youtubeQuery = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery);
       element.youtubeQuery = youtubeQuery;
     }
+    if(!element.guideUrl) {
+      const guideUrl = 'https://www.google.com/search?q=' + encodeURIComponent(searchQuery);
+      element.guideUrl = guideUrl;
+    }
   });
   return trophiesData;
-}
-
-// Auto-detect when page is ready and notify popup
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏆 Page loaded, ready for extraction');
-  });
-} else {
-  console.log('🏆 Page already loaded, ready for extraction');
 }

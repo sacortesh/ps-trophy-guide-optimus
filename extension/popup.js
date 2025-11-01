@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const exportBtn = document.getElementById('exportBtn');
   const clearBtn = document.getElementById('clearBtn');
   const hltbBtn = document.getElementById('hltbBtn');
+  const psnprofilesBtn = document.getElementById('psnprofilesBtn');
   const status = document.getElementById('status');
   const detectedGame = document.getElementById('detectedGame');
   const detectedGameName = document.getElementById('detectedGameName');
@@ -165,6 +166,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  psnprofilesBtn.addEventListener('click', () => {
+    if (!globalGameName) {
+      status.textContent = '❌ No game detected';
+      status.className = 'status error';
+      return;
+    }
+
+    const cleanTitle = globalGameName.replace(/[^\w\s]/g, '').trim();
+    const psnprofilesUrl = `https://psnprofiles.com/search/games?q=${encodeURIComponent(cleanTitle)}`;
+    
+    chrome.tabs.create({
+      url: psnprofilesUrl,
+      active: true
+    });
+
+    status.textContent = '⏱️ Opening PSN Profiles...';
+    status.className = 'status info';
+  })
+
   // Export to CSV
   exportBtn.addEventListener('click', function() {
     chrome.storage.local.get(['trophyData', 'gameTitle', 'gameUrl'], function(data) {
@@ -233,12 +253,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Use the same headers as your original TrueTrophies assembler
     const headers = [
       'Trophy Set',
+      'Earned',
       'Name',
       'Description',
       'Rarity Value',
       'Type',
       'Tags',
-      'Earned',
       'Trophy Score',
       'Guide URL',
       'YouTube Query'
@@ -279,12 +299,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const row = [
         escapeCSV(trophy.trophySet || ''),
+        escapeCSV(trophy.earned ? 'Yes' : 'No'),
         escapeCSV(trophy.title || ''),
         escapeCSV(trophy.description || ''),
         escapeCSV(trophy.sonyRarityValue || ''),
         escapeCSV(trophy.type || ''),
         escapeCSV(tagsDescription),
-        escapeCSV(trophy.earned ? 'Yes' : 'No'),
         trophy.trophyScore || 0,
         escapeCSV(trophy.guideUrl || ''),
         escapeCSV(trophy.youtubeQuery || '')
